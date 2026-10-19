@@ -1,6 +1,6 @@
 {
   "name": "tool-truth",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Flags AI agent answers that state facts their tools never returned, especially after a tool quietly failed.",
   "type": "module",
   "license": "MIT",
@@ -16,5 +16,15 @@
     "tsx": "4.19.2",
     "typescript": "5.7.2",
     "vitest": "3.2.7"
-  }
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "tool-truth": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ]
 }
