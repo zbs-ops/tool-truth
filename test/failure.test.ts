@@ -16,6 +16,15 @@ describe('classifyResult never trusts "ok" on its own', () => {
   ])('%s', (_label, status, payload, expected) => expect(classifyResult(status, payload)).toBe(expected));
 });
 
+describe('echoed request values are not data', () => {
+  it('treats { account: "7731", balance: null } as degraded when 7731 is what was asked', () => {
+    expect(classifyResult('ok', { account: '7731', balance: null }, { account: '7731' })).toBe('degraded');
+  });
+  it('still treats it as usable when there is real data beyond the echo', () => {
+    expect(classifyResult('ok', { account: '7731', balance: 12.5 }, { account: '7731' })).toBe('usable');
+  });
+});
+
 describe('acknowledgesFailure', () => {
   it('recognizes an admission', () => {
     expect(acknowledgesFailure("I couldn't get the status — the lookup failed.")).toBe(true);

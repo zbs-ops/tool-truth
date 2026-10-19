@@ -21,7 +21,11 @@ export interface Transcript {
   steps: Step[];
 }
 
-export type FlagKind = 'unsupported-value' | 'fabrication-after-failure' | 'fabricated-refusal';
+export type FlagKind =
+  | 'unsupported-value'
+  | 'fabrication-after-failure'
+  | 'fabricated-refusal'
+  | 'wrong-entity';
 
 export interface Flag {
   kind: FlagKind;
