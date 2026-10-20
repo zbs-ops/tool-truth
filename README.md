@@ -4,7 +4,7 @@
 >
 > **Approach:** check every concrete value in an agent's answer against what its tools, the user, and its instructions actually provided. Deterministic, no API keys.
 >
-> **Proof:** run on 660 real τ-bench conversations, with every remaining flag reviewed by hand ([write-up](study/RESULTS.md)). 59 tests.
+> **Proof:** run on 660 real GPT-4o conversations and a held-out set of 1,320 Claude conversations, with what worked and what didn't written up ([write-up](study/RESULTS.md)). 61 tests.
 
 
 **Did the agent tell the truth about what its tools returned?** This checks.
@@ -98,6 +98,10 @@ turn against only what came before it. Full write-up: [study/RESULTS.md](study/R
   can't verify, 4 correct off-topic answers, and 11 checker errors.
 - Recall on real logs is unknown (no labels), and the fixes were tuned on this data, so treat
   these as in-sample numbers.
+- **Held-out test (Claude 3.5 Sonnet, 13,419 turns, rules unchanged): it doesn't generalize
+  well yet.** It flags 1.9% of turns, and a random 30 had no confirmed real problems: mostly
+  date ranges ("May 28-29"), example IDs ("a code like 'ABC123'"), rounded figures, and correct
+  multi-step arithmetic. For now, treat it as a triage filter for human review, not a verdict.
 
 For multi-turn logs, use `checkTurns(transcript)` to get a verdict for every agent turn.
 

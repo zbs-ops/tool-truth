@@ -33,6 +33,19 @@ function parseArgs(raw: unknown): Record<string, unknown> {
   return {};
 }
 
+/**
+ * Some models write their tool calls into the message text as well, e.g. Claude's XML
+ * `<function_calls><invoke name="...">...</invoke></function_calls>`. That's an action, not a
+ * statement to the user, and the structured call is already captured from `tool_calls`, so
+ * the markup is removed before the text is checked. Found when the held-out τ-bench run
+ * flagged tool names like "get_user_details" as invented claims.
+ */
+export function stripToolMarkup(text: string): string {
+  // Tags may carry a namespace prefix (`<ns:invoke ...>`), so it's matched optionally.
+  const tag = (name: string) => new RegExp(`<(?:[\\w-]+:)?${name}\\b[\\s\\S]*?(</(?:[\\w-]+:)?${name}>|$)`, 'g');
+  return text.replace(tag('function_calls'), ' ').replace(tag('invoke'), ' ').replace(tag('tool_call'), ' ');
+}
+
 /** OpenAI chat-completions messages. */
 export function fromOpenAI(messages: Json[]): Transcript {
   const steps: Step[] = [];
@@ -52,8 +65,9 @@ export function fromOpenAI(messages: Json[]): Transcript {
         toolNames.set(id, tool);
         steps.push({ role: 'tool_call', id, tool, args: parseArgs(fn.arguments) });
       }
-      if (typeof m.content === 'string' && m.content.trim() !== '') {
-        steps.push({ role: 'assistant', content: m.content });
+      const said = typeof m.content === 'string' ? stripToolMarkup(m.content) : '';
+      if (said.trim() !== '') {
+        steps.push({ role: 'assistant', content: said });
       }
     } else if (role === 'tool') {
       const id = String(m.tool_call_id ?? '');
