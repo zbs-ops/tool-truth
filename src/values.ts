@@ -7,25 +7,99 @@
 export function extractValues(text: string): string[] {
   const found = new Set<string>();
 
-  for (const m of text.matchAll(/\b\d{4}-\d{2}-\d{2}\b/g)) found.add(m[0]);
-  for (const m of text.matchAll(/\b\d{1,2}:\d{2}\b/g)) found.add(m[0]);
-  // IDs: letters and digits mixed, with a digit somewhere (ORD-48213, AB1234, txn_9f3k2).
-  for (const m of text.matchAll(/\b(?=[A-Za-z0-9_-]*\d)(?=[A-Za-z0-9_-]*[A-Za-z])[A-Za-z0-9]+(?:[-_][A-Za-z0-9]+)+\b/g)) {
-    found.add(m[0]);
-  }
-  for (const m of text.matchAll(/\b[A-Z]{2,}\d{2,}\b/g)) found.add(m[0]);
-  for (const m of text.matchAll(/"([^"\n]{2,80})"/g)) if (m[1]) found.add(m[1]);
+  // Markdown list markers ("4. **Kettle**") are numbering, not facts. Measured on real
+  // agent logs, they were one of the biggest sources of false alarms.
+  // A day at the end of a sentence ("on May 21. 3. Modify") is not a list marker.
+  let prose = text.replace(/(^|\n|\s)(\d{1,3})[.)]\s/g, (m, lead: string, _n: string, offset: number) =>
+    new RegExp(`\\b(${MONTHS})\\.?\\s*$`, 'i').test(text.slice(Math.max(0, offset - 12), offset + lead.length)) ? m : lead,
+  );
 
-  // Numbers last, skipping ones that are only part of a date, time, or ID already found.
-  const covered = [...found].join(' ');
-  for (const m of text.matchAll(/[$€£]?\s?-?\d[\d,]*(?:\.\d+)?%?/g)) {
+  // Dates, including inside timestamps (2024-05-07T21:53:00). Blanked out afterwards so
+  // their parts aren't read again as numbers.
+  prose = prose.replace(/(?<!\d)(\d{4}-\d{2}-\d{2})(?!\d)/g, (_m, d: string) => {
+    addDate(found, d.slice(0, 4), d.slice(5, 7), d.slice(8, 10));
+    return ' ';
+  });
+  // Dates written out: "May 19, 2024", "May 19th", "19 May 2024". Agents almost always
+  // write dates this way while tools return ISO, so they're normalized to the same tokens.
+  prose = prose.replace(
+    new RegExp(`\\b(${MONTHS})\\.?\\s+(\\d{1,2})(?:st|nd|rd|th)?(?:,?\\s+(\\d{4}))?\\b`, 'gi'),
+    (_m, mon: string, day: string, year: string | undefined) => {
+      addDate(found, year, monthNumber(mon), day);
+      return ' ';
+    },
+  );
+  prose = prose.replace(
+    new RegExp(`\\b(\\d{1,2})(?:st|nd|rd|th)?\\s+(${MONTHS})\\.?(?:,?\\s+(\\d{4}))?\\b`, 'gi'),
+    (_m, day: string, mon: string, year: string | undefined) => {
+      addDate(found, year, monthNumber(mon), day);
+      return ' ';
+    },
+  );
+  // Times, normalized to 24-hour H:MM so "9:00 AM", "09:00:00" and "9am" all meet.
+  prose = prose.replace(
+    /(?<![\d:])(\d{1,2})(?::(\d{2}))?(?::\d{2})?\s?(am|pm|AM|PM|a\.m\.|p\.m\.)?(?![\d])/g,
+    (m, h: string, min: string | undefined, ap: string | undefined) => {
+      if (min === undefined && ap === undefined) return m; // a plain number, not a time
+      let hour = Number(h);
+      if (hour > 23 || (min !== undefined && Number(min) > 59)) return m;
+      const pm = ap !== undefined && ap.toLowerCase().startsWith('p');
+      const am = ap !== undefined && ap.toLowerCase().startsWith('a');
+      if (pm && hour < 12) hour += 12;
+      if (am && hour === 12) hour = 0;
+      found.add(`${hour}:${min ?? '00'}`);
+      return ' ';
+    },
+  );
+
+  // IDs with separators: ORD-48213, txn_9f3k2, gift_card_7091239. Also their numeric
+  // parts, because people say "Gift Card 7091239" for gift_card_7091239. Counts like
+  // "500-piece" or "15-inch" aren't IDs; their number is picked up below.
+  for (const m of prose.matchAll(/\b(?=[A-Za-z0-9_-]*\d)(?=[A-Za-z0-9_-]*[A-Za-z])[A-Za-z0-9]+(?:[-_][A-Za-z0-9]+)+\b/g)) {
+    if (/^\d+(?:-[A-Za-z]+)+$/.test(m[0])) continue;
+    found.add(m[0]);
+    for (const part of m[0].split(/[-_]/)) if (/^\d{4,}$/.test(part)) found.add(String(Number(part)));
+  }
+  // Codes that mix letters and digits with no separator: HAT266, M20IZO, W5272531. Taken
+  // whole, so their digits are never read as a separate number.
+  for (const m of prose.matchAll(/\b(?=[A-Za-z0-9]*\d)(?=[A-Za-z0-9]*[A-Za-z])[A-Za-z0-9]{4,}\b/g)) found.add(m[0]);
+  // Quoted strings, without the punctuation American style puts inside the quotes
+  // ("return requested." vs a returned value of return requested).
+  for (const m of prose.matchAll(/"([^"\n]{2,80})"/g)) {
+    const q = m[1]?.replace(/[\s.,;:!?]+$/, '');
+    // Two-letter quotes ("no", "ok") are instructions to the user, not claims.
+    if (q && q.length >= 3) found.add(q);
+  }
+
+  // Standalone numbers only: never digits glued to letters, which belong to a code.
+  for (const m of prose.matchAll(/(?<![A-Za-z0-9_.-])[$€£]?\s?-?\d[\d,]*(?:\.\d+)?%?(?![A-Za-z0-9_])/g)) {
     const n = normalizeNumber(m[0]);
     if (n === null) continue;
     if (isTrivial(n)) continue;
-    if (covered.includes(m[0].trim())) continue;
     found.add(n);
   }
   return [...found];
+}
+
+const MONTH_NAMES = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+const MONTHS =
+  'january|february|march|april|may|june|july|august|september|october|november|december|jan|feb|mar|apr|jun|jul|aug|sept|sep|oct|nov|dec';
+
+function monthNumber(name: string): string {
+  return String(MONTH_NAMES.indexOf(name.slice(0, 3).toLowerCase()) + 1).padStart(2, '0');
+}
+
+/**
+ * Record a date as its full ISO form when the year is known, plus a month-day token and the
+ * year on its own, so "May 19" and "May 19, 2024" both meet a tool's 2024-05-19.
+ */
+function addDate(found: Set<string>, year: string | undefined, month: string, day: string): void {
+  const md = `${month}-${day.padStart(2, '0')}`;
+  found.add(md);
+  if (year) {
+    found.add(`${year}-${md}`);
+    found.add(year);
+  }
 }
 
 /** "$1,024.50" → "1024.5"; "45.3%" → "45.3". Null if it isn't really a number. */

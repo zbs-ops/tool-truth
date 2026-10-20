@@ -39,7 +39,9 @@ export function fromOpenAI(messages: Json[]): Transcript {
   const toolNames = new Map<string, string>();
   for (const m of messages) {
     const role = m.role;
-    if (role === 'user' && typeof m.content === 'string') {
+    if ((role === 'system' || role === 'developer') && typeof m.content === 'string') {
+      steps.push({ role: 'system', content: m.content });
+    } else if (role === 'user' && typeof m.content === 'string') {
       steps.push({ role: 'user', content: m.content });
     } else if (role === 'assistant') {
       const calls = Array.isArray(m.tool_calls) ? (m.tool_calls as Json[]) : [];
