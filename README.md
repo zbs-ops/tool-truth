@@ -1,5 +1,10 @@
 # tool-truth
 
+> **Problem:** when a tool quietly fails, agents often state values it never returned (45% of the time in a 2026 study).
+> **Approach:** check every concrete value in an agent's answer against what its tools, the user, and its instructions actually provided. Deterministic, no API keys.
+> **Proof:** run on 660 real τ-bench conversations, with every remaining flag reviewed by hand ([write-up](study/RESULTS.md)). 59 tests.
+
+
 **Did the agent tell the truth about what its tools returned?** This checks.
 
 Give an agent tools and sooner or later one of them fails. The dangerous failure isn't the
