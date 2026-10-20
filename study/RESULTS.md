@@ -67,13 +67,48 @@ assembled from option values (1).
   real problems the checker missed. "5 problems in 4,937 turns" is a lower bound, not a rate.
 - **The thresholds were tuned on this same data** while fixing false alarms. Every fix is a
   general normalization rule with a unit test, not a special case, but the numbers above are
-  still in-sample. A fair next step is the held-out Claude 3.5 Sonnet trajectories τ-bench
-  also publishes.
+  still in-sample. Section 4 tests that on held-out data, and the answer is that they don't
+  carry over well.
 
-## 4. What it says about the approach
+## 4. Held-out test: Claude 3.5 Sonnet (the rules were never tuned on this)
+
+τ-bench also publishes Claude 3.5 Sonnet trajectories: **1,320 conversations, 13,419 agent
+turns.** I ran the checker on them with the GPT-4o-tuned rules unchanged
+(`npx tsx study/tau-bench.ts --held-out`).
+
+**First run: 38% of turns flagged, in every conversation.** That was a format problem, not
+the checker's logic: Claude writes its tool calls into the message text as XML (with a
+namespace prefix on the tags), so tool names like `get_user_details` were read as claims. I
+fixed that one thing in the OpenAI adapter, because tool-call markup is an action, not a
+statement to the user. The GPT-4o numbers are identical before and after that fix.
+
+**After that fix: 251 flagged turns (1.9%)**, higher than GPT-4o's 0.7%. I hand-reviewed a
+random 30 (seed 2026) without changing any rule:
+
+| Category | Count |
+|---|---|
+| **Real problems confirmed** | **0** |
+| Unresolved (value appears nowhere, but I couldn't pin the exact trial) | 2 |
+| Correct multi-step arithmetic. Three checked by hand, e.g. $561.05 + $342.81 + $381.26 = $1,285.12 | 9 |
+| **Checker errors** | **19** |
+
+The 19 checker errors are mostly writing styles GPT-4o didn't use: **date ranges** ("May
+28-29" read "-29" as a number, 8 cases), **example formats** ("a code like 'ABC123'", 4),
+**rounded figures** ("prices from about $46 to $54", 3), and a name assembled from a user ID
+(`omar_rossi_1241` → "Omar Rossi").
+
+**What that means:** on a second model, held-out precision for real problems is near zero in
+this sample, and the false-alarm rate is high. The GPT-4o fixes were general rules, but
+general to the patterns GPT-4o happened to produce. Each new model brings new ways of
+writing the same values. I haven't tuned on the held-out set. A fair next round fixes these
+categories, then tests on a third set nobody has looked at.
+
+## 5. What it says about the approach
 
 Exact-match provenance works for what it was built for: concrete values (dates, prices, IDs)
 that an agent states with nothing behind them. The hard part on real logs is normalization.
 Agents rewrite every value into prose ("May 19, 2024", "9:00 AM", "Gift Card 7091239") and
-compute new ones. The two biggest remaining gaps are multi-step arithmetic and paraphrase,
-which is where an optional model-judged mode would earn its cost.
+compute new ones, and the held-out test shows each model does that differently. The biggest
+remaining gaps are multi-step arithmetic, approximation, and paraphrase, which is where an
+optional model-judged mode would earn its cost. As it stands, the checker is most useful as a
+**triage filter** that surfaces turns for a human to read, not as an automatic verdict.

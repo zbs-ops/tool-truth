@@ -3,8 +3,9 @@
  * licensed): customer-service agents in airline and retail domains, using tools against a
  * simulated user. The published trajectories are fetched on demand and not committed.
  *
- *   npx tsx study/tau-bench.ts            # summary
- *   npx tsx study/tau-bench.ts --dump     # also write every flagged turn to study/flagged.json
+ *   npx tsx study/tau-bench.ts                       # GPT-4o (the set the rules were tuned on)
+ *   npx tsx study/tau-bench.ts --held-out            # Claude 3.5 Sonnet (never looked at while tuning)
+ *   add --dump to write every flagged turn to study/flagged.json (or flagged-held-out.json)
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -14,7 +15,11 @@ import { checkTurns } from '../src/check.js';
 import type { FlagKind } from '../src/types.js';
 
 const BASE = 'https://raw.githubusercontent.com/sierra-research/tau-bench/main/historical_trajectories/';
-const FILES = ['gpt-4o-airline.json', 'gpt-4o-retail.json'];
+const HELD_OUT = process.argv.includes('--held-out');
+const FILES = HELD_OUT
+  ? ['sonnet-35-new-airline.json', 'sonnet-35-new-retail.json']
+  : ['gpt-4o-airline.json', 'gpt-4o-retail.json'];
+const OUT = HELD_OUT ? 'flagged-held-out.json' : 'flagged.json';
 const CACHE = join(process.env.HOME ?? '.', '.cache', 'tool-truth-tau');
 
 interface Trajectory {
@@ -38,7 +43,7 @@ async function load(file: string): Promise<Trajectory[]> {
 async function main(): Promise<void> {
   const dump = process.argv.includes('--dump');
   const flagged: unknown[] = [];
-  const lines: string[] = ['tool-truth on τ-bench (GPT-4o historical trajectories)', ''];
+  const lines: string[] = [`tool-truth on τ-bench (${HELD_OUT ? 'Claude 3.5 Sonnet, held out' : 'GPT-4o'} historical trajectories)`, ''];
 
   for (const file of FILES) {
     const data = await load(file);
@@ -68,8 +73,8 @@ async function main(): Promise<void> {
 
   process.stdout.write(lines.join('\n') + '\n');
   if (dump) {
-    writeFileSync(join('study', 'flagged.json'), JSON.stringify(flagged, null, 2));
-    process.stdout.write(`wrote ${flagged.length} flagged turns to study/flagged.json\n`);
+    writeFileSync(join('study', OUT), JSON.stringify(flagged, null, 2));
+    process.stdout.write(`wrote ${flagged.length} flagged turns to study/${OUT}\n`);
   }
 }
 

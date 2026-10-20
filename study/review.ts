@@ -1,7 +1,7 @@
 /**
  * Print a reproducible random sample of flagged turns with evidence for manual review: for
  * each flagged value, where (if anywhere) its digits appear earlier in the raw conversation.
- *   npx tsx study/review.ts [n] [seed]
+ *   npx tsx study/review.ts [n] [seed] [flagged-file]
  */
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -32,7 +32,7 @@ const trajOf = (file: string, task: number, trial?: number) => {
   return raw.get(file)?.find((t) => t.task_id === task && (trial === undefined || t.trial === trial))?.traj ?? [];
 };
 
-const all = JSON.parse(readFileSync('study/flagged.json', 'utf8')) as Flagged[];
+const all = JSON.parse(readFileSync(process.argv[4] ?? 'study/flagged.json', 'utf8')) as Flagged[];
 const idx = [...all.keys()];
 for (let i = idx.length - 1; i > 0; i -= 1) {
   const j = Math.floor(rand() * (i + 1));
@@ -46,7 +46,7 @@ idx.slice(0, n).forEach((k, s) => {
   // so search everything before the first message whose content matches this turn.
   const cut = traj.findIndex((m) => typeof m.content === 'string' && m.content === f.content);
   const before = (cut >= 0 ? traj.slice(0, cut) : traj).map((m) => `${m.role}: ${typeof m.content === 'string' ? m.content : JSON.stringify(m)}`);
-  console.log(`\n#${s + 1} ${f.file.replace('gpt-4o-', '').replace('.json', '')} task ${f.task_id} trial ${f.trial}`);
+  console.log(`\n#${s + 1} ${f.file.replace('gpt-4o-', '').replace('sonnet-35-new-', 'sonnet-').replace('.json', '')} task ${f.task_id} trial ${f.trial}`);
   console.log('  ANSWER: ' + f.content.replace(/\s+/g, ' ').slice(0, 300));
   for (const fl of f.flags) {
     for (const v of fl.values ?? []) {

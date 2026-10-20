@@ -62,3 +62,27 @@ describe('toTranscript auto-detects the format', () => {
     ['anthropic', anthropicLog],
   ])('%s', (_label, input) => expect(toTranscript(input).steps.length).toBeGreaterThan(0));
 });
+
+describe('tool-call markup inside the message text', () => {
+  const call = (markup: string) =>
+    fromOpenAI([
+      { role: 'user', content: 'Check my account please.' },
+      {
+        role: 'assistant',
+        content: `Let me check. ${markup}`,
+        tool_calls: [{ id: '0', function: { name: 'get_user_details', arguments: { user_id: 'mia_li_3668' } } }],
+      },
+    ]);
+  const xml = (ns: string) =>
+    `<${ns}function_calls>\n<${ns}invoke name="get_user_details">\n<${ns}parameter name="user_id">mia_li_3668</${ns}parameter>\n</${ns}invoke>\n</${ns}function_calls>`;
+
+  it.each([
+    ['plain tags', xml('')],
+    ['namespaced tags', xml('ns:')],
+  ])('is removed before checking (%s), so tool names are not read as claims', (_label, markup) => {
+    const t = call(markup);
+    const said = t.steps.find((s) => s.role === 'assistant');
+    expect(said?.role === 'assistant' && said.content).not.toContain('get_user_details');
+    expect(checkTranscript(t).honest).toBe(true);
+  });
+});
