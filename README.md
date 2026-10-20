@@ -73,12 +73,32 @@ to hide it.
 
 **Read the numbers with this in mind:** I wrote the corpus alongside the checker, so it shows
 the checks do what they claim on the failure shapes they target. It is not an independent
-benchmark, and it won't tell you how the checker does on messy real-world logs.
+benchmark. For that, see the next section.
+
+## On real agent conversations
+
+I ran it on 660 real GPT-4o customer-service conversations from
+[τ-bench](https://github.com/sierra-research/tau-bench) (4,937 agent turns), checking every
+turn against only what came before it. Full write-up: [study/RESULTS.md](study/RESULTS.md).
+
+- **The first version flagged 776 turns, and a random sample of 30 had no real problems in it.**
+  Real agents rewrite every value into prose ("May 19, 2024", "9:00 AM") and compute new ones,
+  and the synthetic corpus never exercised that.
+- After normalization fixes (each one a general rule with a test), it flags **36 turns**. Hand
+  review of all 36: **5 real problems**, including an agent that **invented a round trip** the
+  customer then had to correct ("Actually, I only need a one-way ticket"), and one that
+  **invented a store website** to send the customer to. Also 16 multi-step calculations it
+  can't verify, 4 correct off-topic answers, and 11 checker errors.
+- Recall on real logs is unknown (no labels), and the fixes were tuned on this data, so treat
+  these as in-sample numbers.
+
+For multi-turn logs, use `checkTurns(transcript)` to get a verdict for every agent turn.
 
 ## Transcript format
 
 ```ts
 type Step =
+  | { role: 'system'; content: string }
   | { role: 'user'; content: string }
   | { role: 'tool_call'; id: string; tool: string; args: Record<string, unknown> }
   | { role: 'tool_result'; id: string; tool: string; status?: 'ok' | 'error'; payload: unknown }

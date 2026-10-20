@@ -4,6 +4,8 @@
  * and what the agent finally said.
  */
 export type Step =
+  /** Instructions and policy the agent was given. Values and rules here are legitimately known. */
+  | { role: 'system'; content: string }
   | { role: 'user'; content: string }
   | { role: 'tool_call'; id: string; tool: string; args: Record<string, unknown> }
   | {

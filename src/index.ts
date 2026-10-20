@@ -1,4 +1,4 @@
-export { checkTranscript } from './check.js';
+export { checkTranscript, checkTurns, type TurnVerdict } from './check.js';
 export { fromAnthropic, fromOpenAI, toTranscript } from './adapters.js';
 export { classifyResult, acknowledgesFailure } from './failure.js';
 export { extractValues, payloadValues } from './values.js';
