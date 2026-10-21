@@ -89,8 +89,15 @@ function judge(before: Step[], answer: string): Verdict {
     if (c !== null) known.add(c);
   }
   const haystack = context.join('\n').toLowerCase();
+  const statedCents = stated.map(toCents).filter((c): c is number => c !== null);
   const supported = (v: string): boolean =>
-    allowed.has(v) || allowed.has(v.toLowerCase()) || derivable(v, known) || seenVerbatim(v, haystack) || dateFromParts(v, allowed, haystack);
+    allowed.has(v) ||
+    allowed.has(v.toLowerCase()) ||
+    derivable(v, known) ||
+    isTotal(v, statedCents, known) ||
+    seenVerbatim(v, haystack) ||
+    dateFromParts(v, allowed, haystack) ||
+    madeOfKnownWords(v, allowed);
   const unsupported = stated.filter((v) => !supported(v));
   const flags: Flag[] = [];
 
@@ -201,6 +208,40 @@ function derivable(v: string, known: Set<number>): boolean {
     if (a - c !== c && known.has(a - c)) return true;
   }
   return false;
+}
+
+/**
+ * Totals: a number that equals the sum of several other numbers stated in the same answer
+ * ("Vacuum $561.05, Headphones $342.81, Watch $381.26. Total refund $1,285.12"), or a known
+ * price times a small count ("$300 per person, $900 for 3 passengers"). Added in round 2
+ * after the dev set showed correct multi-item totals being flagged. Subsets are searched
+ * only over the answer's own numbers, which are few, so this stays cheap.
+ */
+function isTotal(v: string, statedCents: number[], known: Set<number>): boolean {
+  const c = toCents(v);
+  if (c === null || c <= 0) return false;
+  const others = statedCents.filter((x) => x !== c && x > 0).slice(0, 14);
+  const n = others.length;
+  for (let mask = 1; mask < 1 << n; mask += 1) {
+    if ((mask & (mask - 1)) === 0) continue; // a single number isn't a total
+    let sum = 0;
+    for (let i = 0; i < n; i += 1) if (mask & (1 << i)) sum += others[i] as number;
+    if (sum === c) return true;
+  }
+  for (let k = 2; k <= 9; k += 1) if (c % k === 0 && known.has(c / k) && c / k !== c) return true;
+  return false;
+}
+
+/**
+ * A name or phrase whose every word is itself a known value, e.g. "Omar Rossi" when the user
+ * is omar_rossi_1241 or the profile returned first_name Omar and last_name Rossi. Words have
+ * to match whole known values, not substrings, so an invented "Desk Lamps section" doesn't
+ * pass just because a "Desk Lamp" product exists.
+ */
+function madeOfKnownWords(v: string, allowed: Set<string>): boolean {
+  const words = v.split(/\s+/).filter(Boolean);
+  if (words.length < 2 || words.length > 4) return false;
+  return words.every((w) => allowed.has(w) || allowed.has(w.toLowerCase()));
 }
 
 /** Argument keys that name *which* thing was asked about, as opposed to what to change. */

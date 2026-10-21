@@ -20,12 +20,18 @@ export function extractValues(text: string): string[] {
     addDate(found, d.slice(0, 4), d.slice(5, 7), d.slice(8, 10));
     return ' ';
   });
-  // Dates written out: "May 19, 2024", "May 19th", "19 May 2024". Agents almost always
-  // write dates this way while tools return ISO, so they're normalized to the same tokens.
+  // Dates written out: "May 19, 2024", "May 19th", "19 May 2024", and ranges like
+  // "May 28-29, 2024". Agents almost always write dates this way while tools return ISO, so
+  // they're normalized to the same tokens. (Ranges came from the round-2 dev set: without
+  // this, "May 28-29" read the second day as the number -29.)
   prose = prose.replace(
-    new RegExp(`\\b(${MONTHS})\\.?\\s+(\\d{1,2})(?:st|nd|rd|th)?(?:,?\\s+(\\d{4}))?\\b`, 'gi'),
-    (_m, mon: string, day: string, year: string | undefined) => {
+    new RegExp(
+      `\\b(${MONTHS})\\.?\\s+(\\d{1,2})(?:st|nd|rd|th)?(?:\\s*[-–]\\s*(\\d{1,2})(?:st|nd|rd|th)?)?(?:,?\\s+(\\d{4}))?\\b`,
+      'gi',
+    ),
+    (_m, mon: string, day: string, day2: string | undefined, year: string | undefined) => {
       addDate(found, year, monthNumber(mon), day);
+      if (day2) addDate(found, year, monthNumber(mon), day2);
       return ' ';
     },
   );
@@ -52,13 +58,31 @@ export function extractValues(text: string): string[] {
     },
   );
 
+  // Illustrations are not claims: "a code like 'ABC123'", "e.g. W0000000", "in the format
+  // firstname_lastname_numbers". The example after the cue is dropped. (Round-2 dev set.)
+  prose = prose.replace(
+    /\b(like|e\.g\.|eg\.|such as|for example|for instance|format(?: of)?|looks like|example:?)\s*[:,]?\s*['"‘“#]?[A-Za-z0-9_#-]+['"’”]?/gi,
+    '$1 ',
+  );
+  // Hedged numbers are approximations, not exact claims: "about $46 to $54", "above $270",
+  // "around 13 days". Exact-match checking can't judge them, so they're left out. A stated
+  // limit, not a fix: an invented approximate number passes. (Round-2 dev set.)
+  prose = prose.replace(
+    /\b(about|around|approximately|approx\.?|roughly|nearly|almost|over|above|under|below|up to|at least|at most|more than|less than|~)\s*\$?\d[\d,]*(?:\.\d+)?(?:\s*(?:to|-|–|and)\s*\$?\d[\d,]*(?:\.\d+)?)?/gi,
+    '$1 ',
+  );
+
   // IDs with separators: ORD-48213, txn_9f3k2, gift_card_7091239. Also their numeric
-  // parts, because people say "Gift Card 7091239" for gift_card_7091239. Counts like
-  // "500-piece" or "15-inch" aren't IDs; their number is picked up below.
+  // parts, because people say "Gift Card 7091239" for gift_card_7091239, and their
+  // alphabetic parts, because a user ID like omar_rossi_1241 grounds the name "Omar Rossi".
+  // Counts like "500-piece" or "15-inch" aren't IDs; their number is picked up below.
   for (const m of prose.matchAll(/\b(?=[A-Za-z0-9_-]*\d)(?=[A-Za-z0-9_-]*[A-Za-z])[A-Za-z0-9]+(?:[-_][A-Za-z0-9]+)+\b/g)) {
     if (/^\d+(?:-[A-Za-z]+)+$/.test(m[0])) continue;
     found.add(m[0]);
-    for (const part of m[0].split(/[-_]/)) if (/^\d{4,}$/.test(part)) found.add(String(Number(part)));
+    for (const part of m[0].split(/[-_]/)) {
+      if (/^\d{4,}$/.test(part)) found.add(String(Number(part)));
+      else if (/^[A-Za-z]{3,}$/.test(part) && m[0].includes('_')) found.add(part.toLowerCase());
+    }
   }
   // Codes that mix letters and digits with no separator: HAT266, M20IZO, W5272531. Taken
   // whole, so their digits are never read as a separate number.
