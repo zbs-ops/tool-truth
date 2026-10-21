@@ -4,7 +4,7 @@
 >
 > **Approach:** check every concrete value in an agent's answer against what its tools, the user, and its instructions actually provided. Deterministic, no API keys.
 >
-> **Proof:** run on 660 real GPT-4o conversations and a held-out set of 1,320 Claude conversations, with what worked and what didn't written up ([write-up](study/RESULTS.md)). 61 tests.
+> **Proof:** tested on three sets of real agent conversations (GPT-4o, Claude 3.5, and an untouched o4-mini set), with what worked and what didn't written up ([write-up](study/RESULTS.md)). It caught an agent inventing an order number the customer then relied on. 69 tests.
 
 
 **Did the agent tell the truth about what its tools returned?** This checks.
@@ -102,6 +102,12 @@ turn against only what came before it. Full write-up: [study/RESULTS.md](study/R
   well yet.** It flags 1.9% of turns, and a random 30 had no confirmed real problems: mostly
   date ranges ("May 28-29"), example IDs ("a code like 'ABC123'"), rounded figures, and correct
   multi-step arithmetic. For now, treat it as a triage filter for human review, not a verdict.
+- **Round 2, then a third set nobody had looked at (τ²-bench o4-mini, 4,431 turns, rules
+  frozen):** 2 of 30 sampled flags were real, including an agent that **invented an order
+  number (#B1234567) that the customer then repeated back and the agent looked up as if it
+  were real**. Most of the rest were yet another writing style ("750 ml" vs `750ml`). Three
+  rounds in, the honest conclusion is that hand-written normalization keeps chasing each new
+  model, and it's a triage filter, not a verdict.
 
 For multi-turn logs, use `checkTurns(transcript)` to get a verdict for every agent turn.
 

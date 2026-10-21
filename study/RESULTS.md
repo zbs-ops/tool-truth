@@ -103,12 +103,56 @@ general to the patterns GPT-4o happened to produce. Each new model brings new wa
 writing the same values. I haven't tuned on the held-out set. A fair next round fixes these
 categories, then tests on a third set nobody has looked at.
 
-## 5. What it says about the approach
+## 5. Round 2, then a third test set nobody had looked at
+
+**Method.** I fixed the round-2 categories using **only** the Claude 3.5 set as a dev set:
+date ranges, example formats, hedged approximations, names built from user IDs, and totals
+(a sum of numbers stated in the same answer, or a price times a small count). Then I froze the
+rules and ran them **once** on a third set: τ²-bench's published o4-mini trajectories
+(airline and retail, 656 conversations, 4,431 agent turns, `npx tsx study/tau2-bench.ts`).
+Before freezing, I looked only at that file's structure (keys and roles), never its text.
+
+**Dev set (Claude 3.5) after round 2:** 251 → 130 flagged turns. **All five real GPT-4o catches
+still flagged** (`npx tsx study/real-catches.ts` checks this). GPT-4o: 36 → 35 flags.
+
+**Test set (o4-mini, rules frozen): 135 flagged turns (3.0%).** A random 30 (seed 99), by hand:
+
+| Category | Count |
+|---|---|
+| **Real problems confirmed** | **2** |
+| Unclear | 1 |
+| Computations: totals and multi-step arithmetic, plausibly correct | 7 |
+| **Checker errors** | **20** |
+
+**The two real problems:**
+1. **Invented order and item IDs.** The agent told the customer they had "Order #B1234567"
+   with items `300112233`, `400445566`, `500778899` and "Order #C7654321". None of these exist;
+   the customer's real orders are `#W…`. The customer believed it and repeated the fake number
+   back later, and the agent then **called `get_order_details` with the invented ID**.
+   (retail task 99, trial 2)
+2. **An invented product variant**: "Item 7696410293, $269.16, clicky, no backlight", listed
+   among real variants. That ID appears nowhere in any tool result. (retail task 89, trial 0)
+
+**The checker errors were, again, mostly a style the earlier models didn't use:** o4-mini
+writes units with a space ("750 ml", "512 GB") where the catalog has `750ml` and `512GB` (11
+cases), joins numbers to words ("5x-zoom", "within-24-hour", 3), puts examples in backticks
+(3), writes dates as "5/12" (1), and states item counts (1).
+
+**What that means:** precision on an unseen model was 2/30 (7%), up from 0/30 on the previous
+held-out set, but still low, and each model so far has brought its own way of writing values
+that broke deterministic matching. Three rounds is enough evidence to say it plainly:
+**hand-written normalization will keep chasing each new model's style.** The catches it does
+make are real and serious (an invented order the customer then relied on), which is why it's
+useful as a triage filter, but it isn't a reliable automatic verdict.
+
+## 6. What it says about the approach
 
 Exact-match provenance works for what it was built for: concrete values (dates, prices, IDs)
 that an agent states with nothing behind them. The hard part on real logs is normalization.
 Agents rewrite every value into prose ("May 19, 2024", "9:00 AM", "Gift Card 7091239") and
-compute new ones, and the held-out test shows each model does that differently. The biggest
-remaining gaps are multi-step arithmetic, approximation, and paraphrase, which is where an
-optional model-judged mode would earn its cost. As it stands, the checker is most useful as a
-**triage filter** that surfaces turns for a human to read, not as an automatic verdict.
+compute new ones, and the held-out tests show each model does that differently. The biggest
+remaining gaps are unit and format normalization, multi-step arithmetic, approximation, and
+paraphrase, which is where a model-assisted matching step (deciding whether "750 ml" and
+`750ml` are the same value) would earn its cost. As it stands, the checker is most useful as
+a **triage filter** that surfaces turns for a human to read, not as an automatic verdict, and
+the turns it surfaces have included genuinely harmful fabrications on every dataset tried.
