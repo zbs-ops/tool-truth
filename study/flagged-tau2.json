@@ -182,23 +182,6 @@
   },
   {
     "file": "o4-mini-2025-04-16_airline_default_gpt-4.1-2025-04-14_4trials.json",
-    "task_id": "8",
-    "trial": 3,
-    "turn": 3,
-    "content": "Sure—I'd be happy to help you rebook that same flight. To get started, could you please provide your user ID (for example, `sara_doe_496`)? Once I have that, I can look up your May 10 reservation and find the exact flight number.",
-    "flags": [
-      {
-        "kind": "unsupported-value",
-        "message": "The answer states values that no tool returned and the user never gave.",
-        "values": [
-          "sara_doe_496",
-          "sara"
-        ]
-      }
-    ]
-  },
-  {
-    "file": "o4-mini-2025-04-16_airline_default_gpt-4.1-2025-04-14_4trials.json",
     "task_id": "18",
     "trial": 0,
     "turn": 45,
@@ -642,22 +625,6 @@
   },
   {
     "file": "o4-mini-2025-04-16_retail_default_gpt-4.1-2025-04-14_4trials.json",
-    "task_id": "54",
-    "trial": 0,
-    "turn": 11,
-    "content": "I’m still not finding an account under those details. Do you have your user ID, or perhaps one of your order numbers (for example, `#W0123456`)? That will help me locate your account.",
-    "flags": [
-      {
-        "kind": "fabrication-after-failure",
-        "message": "The answer states concrete values after find_user_id_by_name_zip (error) returned nothing usable, and doesn't say so.",
-        "values": [
-          "W0123456"
-        ]
-      }
-    ]
-  },
-  {
-    "file": "o4-mini-2025-04-16_retail_default_gpt-4.1-2025-04-14_4trials.json",
     "task_id": "17",
     "trial": 1,
     "turn": 15,
@@ -733,39 +700,6 @@
         "values": [
           "500",
           "750"
-        ]
-      }
-    ]
-  },
-  {
-    "file": "o4-mini-2025-04-16_retail_default_gpt-4.1-2025-04-14_4trials.json",
-    "task_id": "105",
-    "trial": 0,
-    "turn": 21,
-    "content": "Here’s a summary of your exchange request for order #W4316152:\n\n• Original items (×2):  \n  – Item 7292993796 (glass, 2 L, induction) @ \\$94.80 each = \\$189.60 total  \n\n• New items:  \n 1) Item 3761330360 (ceramic, 2 L, gas) @ \\$101.12  \n 2) Item 9647374798 (glass, 1.5 L, gas) @ \\$109.58  \n  ———  \n  New total = \\$210.70  \n  Price difference you owe = \\$210.70 − \\$189.60 = \\$21.10  \n\nYou asked to pay the \\$21.10 with your credit card on file, but I only see a gift card (gift_card_7245904) in your account. To proceed, please either:  \n • Provide the ID of another payment method on your account (for example, “credit_card_0000000” or “paypal_0000000”), or  \n • Confirm you’d like me to use gift_card_7245904 (balance \\$17.00) and then let me know how you’d cover the \\$4.10 shortfall.\n\nOnce you let me know which payment method to use, please confirm (“yes”) and I’ll submit your exchange request.",
-    "flags": [
-      {
-        "kind": "unsupported-value",
-        "message": "The answer states values that no tool returned and the user never gave.",
-        "values": [
-          "paypal_0000000"
-        ]
-      }
-    ]
-  },
-  {
-    "file": "o4-mini-2025-04-16_retail_default_gpt-4.1-2025-04-14_4trials.json",
-    "task_id": "105",
-    "trial": 0,
-    "turn": 25,
-    "content": "To proceed, you’ll need to add your debit card as a payment method in your account. Here’s what to do:\n\n1. Log in to our website or app.  \n2. Go to “Account Settings” → “Payment Methods.”  \n3. Add your debit card details and save. You’ll then see a new payment method entry with an ID (something like “credit_card_1234567” or “debit_card_1234567”).  \n\nOnce you have that payment method ID, just let me know it, and I’ll charge the full \\$21.10 to that card and submit your exchange request.",
-    "flags": [
-      {
-        "kind": "unsupported-value",
-        "message": "The answer states values that no tool returned and the user never gave.",
-        "values": [
-          "debit_card_1234567",
-          "1234567"
         ]
       }
     ]
@@ -1229,22 +1163,6 @@
   },
   {
     "file": "o4-mini-2025-04-16_retail_default_gpt-4.1-2025-04-14_4trials.json",
-    "task_id": "8",
-    "trial": 2,
-    "turn": 3,
-    "content": "Sure! I can help with that. To get started, I’ll need to locate your account and the specific order. Could you please provide:  \n1) The email address on your account  \n2) The order ID (e.g. `#W0000000`) that contains the water bottle and desk lamp  \nOnce I have those, I can pull up your order and walk you through the exchange process.",
-    "flags": [
-      {
-        "kind": "unsupported-value",
-        "message": "The answer states values that no tool returned and the user never gave.",
-        "values": [
-          "W0000000"
-        ]
-      }
-    ]
-  },
-  {
-    "file": "o4-mini-2025-04-16_retail_default_gpt-4.1-2025-04-14_4trials.json",
     "task_id": "110",
     "trial": 1,
     "turn": 21,
@@ -1310,22 +1228,6 @@
         "values": [
           "1181.05",
           "1340.94"
-        ]
-      }
-    ]
-  },
-  {
-    "file": "o4-mini-2025-04-16_retail_default_gpt-4.1-2025-04-14_4trials.json",
-    "task_id": "9",
-    "trial": 2,
-    "turn": 3,
-    "content": "Sure! I can help with that. To get started, I’ll need to locate your account and the specific order. Could you please provide:  \n1) The email address on your account  \n2) The order ID (e.g. `#W0000000`) that contains the water bottle and desk lamp  \nOnce I have those, I can pull up your order and walk you through the exchange process.",
-    "flags": [
-      {
-        "kind": "unsupported-value",
-        "message": "The answer states values that no tool returned and the user never gave.",
-        "values": [
-          "W0000000"
         ]
       }
     ]
@@ -1443,22 +1345,6 @@
         "message": "The answer states values that no tool returned and the user never gave.",
         "values": [
           "1.5"
-        ]
-      }
-    ]
-  },
-  {
-    "file": "o4-mini-2025-04-16_retail_default_gpt-4.1-2025-04-14_4trials.json",
-    "task_id": "49",
-    "trial": 2,
-    "turn": 3,
-    "content": "Sure! I can help with that exchange. First, I need to verify your account so I can look up your order. Could you please provide the email address you used when placing the order, as well as the order ID (for example `#W0001234`)?",
-    "flags": [
-      {
-        "kind": "unsupported-value",
-        "message": "The answer states values that no tool returned and the user never gave.",
-        "values": [
-          "W0001234"
         ]
       }
     ]
@@ -2122,39 +2008,6 @@
         "message": "The answer states values that no tool returned and the user never gave.",
         "values": [
           "500"
-        ]
-      }
-    ]
-  },
-  {
-    "file": "o4-mini-2025-04-16_retail_default_gpt-4.1-2025-04-14_4trials.json",
-    "task_id": "105",
-    "trial": 3,
-    "turn": 17,
-    "content": "Got it—one kettle swapped to ceramic gas (item 3761330360) and the other to glass 1.5 L gas (item 9647374798), for a total extra of $21.10. \n\nTo complete the exchange, please provide the ID of the credit card you’d like to charge (for example, something like `credit_card_1234567`). If you don’t know the exact ID, you can tell me the last four digits and I’ll match it to your account. Once I have that, I’ll set up the exchange request.",
-    "flags": [
-      {
-        "kind": "unsupported-value",
-        "message": "The answer states values that no tool returned and the user never gave.",
-        "values": [
-          "credit_card_1234567",
-          "1234567"
-        ]
-      }
-    ]
-  },
-  {
-    "file": "o4-mini-2025-04-16_retail_default_gpt-4.1-2025-04-14_4trials.json",
-    "task_id": "105",
-    "trial": 3,
-    "turn": 21,
-    "content": "I checked your file and you only have one payment method on record—a gift card (gift_card_7245904) with a $17 balance—which unfortunately isn’t enough to cover the full $21.10. To complete the exchange, we’ll need either:  \n\n• A second payment method on file (credit card or PayPal) that can cover the $4.10 shortfall, or  \n• A single payment method (credit card or PayPal) to cover the full $21.10.  \n\nIf you’d rather use PayPal, please share your PayPal payment‐method ID (it looks like `paypal_1234567`).  \nIf you’d rather use a credit card, please share its payment‐method ID (it looks like `credit_card_1234567`).  \n\nLet me know which you prefer and the corresponding ID, and I’ll submit the exchange right away!",
-    "flags": [
-      {
-        "kind": "unsupported-value",
-        "message": "The answer states values that no tool returned and the user never gave.",
-        "values": [
-          "paypal_1234567"
         ]
       }
     ]
