@@ -4,7 +4,7 @@
 >
 > **Approach:** check every concrete value in an agent's answer against what its tools, the user, and its instructions actually provided. Deterministic, no API keys.
 >
-> **Proof:** tested on three sets of real agent conversations (GPT-4o, Claude 3.5, and an untouched o4-mini set), with what worked and what didn't written up ([write-up](study/RESULTS.md)). It caught an agent inventing an order number the customer then relied on. 69 tests.
+> **Proof:** tested on three sets of real agent conversations (GPT-4o, Claude 3.5, and an untouched o4-mini set), with what worked and what didn't written up ([write-up](study/RESULTS.md)). It caught an agent inventing an order number the customer then relied on. Its invented-ID view was 8 for 10 on real problems where the full checker was 2 for 30, with no false alarms on two models it had never seen. 100 tests.
 
 
 **Did the agent tell the truth about what its tools returned?** This checks.
@@ -109,7 +109,20 @@ turn against only what came before it. Full write-up: [study/RESULTS.md](study/R
   rounds in, the honest conclusion is that hand-written normalization keeps chasing each new
   model, and it's a triage filter, not a verdict.
 
-For multi-turn logs, use `checkTurns(transcript)` to get a verdict for every agent turn.
+- **A high-confidence view: invented IDs (`idFlags`).** Both real o4-mini catches were IDs, and an
+  ID has no formatting variants to get wrong. So `idFlags(verdict)` keeps only flags about an
+  ungrounded order number, item ID, booking reference or user ID. On o4-mini, **8 of its 10 flags
+  were real fabrications** (invented orders and items, two of which the agent then looked up),
+  against 2 of 30 for the full checker. An independent scan for retail-format IDs found 7
+  invented ones there, and the ID view caught all 7. Then, with rules frozen, on three models
+  it had never seen (Claude 3.7 Sonnet, GPT-4.1, GPT-4.1-mini): the first run produced 3 false
+  flags on Claude 3.7 (an agent adding the standard `#W` to a number the user typed), fixed in
+  one more round, and **0 flags on GPT-4.1 and GPT-4.1-mini**, where the independent scan
+  confirms there were no invented retail IDs to find. Those models just didn't invent IDs, so
+  precision on an unseen model that *does* is still untested.
+
+For multi-turn logs, use `checkTurns(transcript)` to get a verdict for every agent turn. For the
+short list worth acting on first, pass a verdict to `idFlags`.
 
 ## Transcript format
 

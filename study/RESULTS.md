@@ -156,3 +156,53 @@ paraphrase, which is where a model-assisted matching step (deciding whether "750
 `750ml` are the same value) would earn its cost. As it stands, the checker is most useful as
 a **triage filter** that surfaces turns for a human to read, not as an automatic verdict, and
 the turns it surfaces have included genuinely harmful fabrications on every dataset tried.
+
+## 7. A high-confidence view: invented IDs (rounds 3 and 4)
+
+**Question.** Both real problems in the o4-mini sample were invented IDs. An ID has no
+formatting variants ("750 ml" vs `750ml` can't happen to `#W5565470`), and an invented one
+does the most harm: the customer writes it down and the agent may act on it. So: are the flags
+about an ID-shaped value (`isIdShaped`: 6+ digits, or 5+ letters and digits that aren't a
+number with a unit) much more often real?
+
+**Dev sets (in-sample; rules developed here).** Reviewing every ID flag in context
+(`npx tsx study/id-context.ts study/flagged-tau2.json`) showed two noise classes: examples the
+example filter missed (backticks, guillemets, "e.g. A or B", and "in a format like 'X'", where the
+cue `format` swallowed the word "like" as if it were the example), and field names
+(`Address1`). Fixing those (general rules, each with a test):
+
+| Set | All flags | ID flags | Real among ID flags |
+|---|---|---|---|
+| GPT-4o (τ-bench) | 35 | 1 | 1 (misquoted order ID) |
+| Claude 3.5 (τ-bench) | 123 | 1 | 1 (`KIN1W8N` for the real `K1NW8N`) |
+| o4-mini (τ²-bench) | 126 | 10 | **8** |
+
+The 8 on o4-mini: invented order and item IDs presented as the customer's (retail tasks 98,
+99, 100, 107; in 98, 100 and 107 the agent then called `get_order_details` with its own
+invention), invented catalog variants (task 4; task 110, where it incremented a real item ID
+to make four more; task 89), and an exchange "submitted" for an item ID that appears nowhere
+(task 8). The 2 misses: a French "par exemple ... « prenom_nom_123 »" and "a reference like
+“Order #W0001234.”". For comparison, a random 30 of all o4-mini flags had 2 real (section 5).
+
+**Independent check on recall (retail only).** `study/id-oracle.ts` scans every agent turn for
+retail-format IDs (`#W` + 7 digits, 10-digit items) never seen earlier in the conversation. On
+o4-mini, its non-example hits are 7 turns; the ID view flags all 7 (and the `#B1234567` case,
+which isn't retail-format).
+
+**Held-out, round 3 (frozen, run once): Claude 3.7 Sonnet and GPT-4.1** (τ²-bench, airline and
+retail). Claude 3.7: 44 flags, **3 ID flags, 0 real**. All three were the agent adding the
+standard `#W` to digits the user had typed ("Would the order ID be #W9502127?"). GPT-4.1: 25
+flags, 0 ID flags.
+
+**Round 4 (dev: Claude 3.7):** a 1–2 letter prefix on 5+ digits counts as grounded when exactly
+those digits were already said. Claude 3.7: 0 ID flags. The o4-mini 8 and the GPT-4o 5 still fire.
+
+**Held-out, round 4 (frozen, run once): GPT-4.1-mini** (`--setting base`): 72 flags, **0 ID
+flags.** The independent scan finds one retail-format ID in GPT-4.1-mini's turns, an example
+("for example, #W0000000"), and none in Claude 3.7's or GPT-4.1's, so on these three models
+there were no invented retail IDs for the ID view to miss.
+
+**What that means.** The ID view is a short, high-yield list: 8 of 10 real on the one model in
+this data that invents IDs, and silent, with no false alarms after round 4, on three models that
+don't. What it can't show yet is precision on an *unseen* model that invents IDs, because none of
+the held-out models did. Its recall outside retail-format IDs isn't measured.

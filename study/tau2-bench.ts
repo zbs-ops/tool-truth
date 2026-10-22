@@ -13,10 +13,13 @@ import type { FlagKind, Step, Transcript } from '../src/types.js';
 import { stripToolMarkup } from '../src/adapters.js';
 
 const BASE = 'https://raw.githubusercontent.com/sierra-research/tau2-bench/main/data/tau2/results/final/';
-const FILES = [
-  'o4-mini-2025-04-16_airline_default_gpt-4.1-2025-04-14_4trials.json',
-  'o4-mini-2025-04-16_retail_default_gpt-4.1-2025-04-14_4trials.json',
-];
+// --model picks another agent model from the same published results (default: o4-mini, the
+// round-2 test set). Round 3's held-out sets: claude-3-7-sonnet-20250219 and gpt-4.1-2025-04-14.
+// Round 4's: gpt-4.1-mini-2025-04-14 with --setting base (that's how its files are named).
+const MODEL = process.argv.includes('--model') ? (process.argv[process.argv.indexOf('--model') + 1] as string) : 'o4-mini-2025-04-16';
+const SETTING = process.argv.includes('--setting') ? (process.argv[process.argv.indexOf('--setting') + 1] as string) : 'default';
+const FILES = ['airline', 'retail'].map((d) => `${MODEL}_${d}_${SETTING}_gpt-4.1-2025-04-14_4trials.json`);
+const OUT = MODEL === 'o4-mini-2025-04-16' ? 'flagged-tau2.json' : `flagged-tau2-${MODEL.split('-2025')[0]}.json`;
 const CACHE = join(process.env.HOME ?? '.', '.cache', 'tool-truth-tau2');
 
 interface Tau2Message {
@@ -104,8 +107,8 @@ async function main(): Promise<void> {
   }
   process.stdout.write(lines.join('\n') + '\n');
   if (dump) {
-    writeFileSync(join('study', 'flagged-tau2.json'), JSON.stringify(flagged, null, 2));
-    process.stdout.write(`wrote ${flagged.length} flagged turns to study/flagged-tau2.json\n`);
+    writeFileSync(join('study', OUT), JSON.stringify(flagged, null, 2));
+    process.stdout.write(`wrote ${flagged.length} flagged turns to study/${OUT}\n`);
   }
 }
 

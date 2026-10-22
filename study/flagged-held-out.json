@@ -1,23 +1,6 @@
 [
   {
     "file": "sonnet-35-new-airline.json",
-    "task_id": 12,
-    "trial": 0,
-    "reward": 1,
-    "turn": 7,
-    "content": "\n\nI apologize, but I'm unable to find a user account with the ID \"4739\". This might not be the correct user ID. The user ID usually follows a format like \"firstname_lastname_numbers\" (for example: \"sara_doe_496\"). \n\nCould you please:\n1. Double-check your user ID, or\n2. Provide the reservation ID directly\n\nWithout either a valid user ID or reservation ID, I won't be able to access your reservation information to help with the cancellation.",
-    "flags": [
-      {
-        "kind": "unsupported-value",
-        "message": "The answer states values that no tool returned and the user never gave.",
-        "values": [
-          "firstname_lastname_numbers"
-        ]
-      }
-    ]
-  },
-  {
-    "file": "sonnet-35-new-airline.json",
     "task_id": 23,
     "trial": 0,
     "reward": 0,
@@ -117,24 +100,6 @@
         "message": "The answer states values that no tool returned and the user never gave.",
         "values": [
           "1660"
-        ]
-      }
-    ]
-  },
-  {
-    "file": "sonnet-35-new-airline.json",
-    "task_id": 16,
-    "trial": 1,
-    "reward": 0,
-    "turn": 4,
-    "content": " Let me help you find your information. First, I'll need your user ID to access your profile information. The system requires specific identifiers to protect customer privacy, and I cannot search by name alone. \n\nCould you please provide your user ID? It should be in a format like \"username_123\" and you can find it in your account profile or any confirmation emails you received from us.\n\nOnce you provide your user ID, I'll be able to help you check your reservation and provide information about the delay.",
-    "flags": [
-      {
-        "kind": "unsupported-value",
-        "message": "The answer states values that no tool returned and the user never gave.",
-        "values": [
-          "username_123",
-          "username"
         ]
       }
     ]
@@ -347,41 +312,6 @@
   },
   {
     "file": "sonnet-35-new-airline.json",
-    "task_id": 37,
-    "trial": 4,
-    "reward": 0,
-    "turn": 2,
-    "content": " I'll help you with your concerns about the delayed flight. Let me check your information first to assist you better.\n\nCould you please provide your user ID so I can look up your specific reservation details? The user ID would be in a format like \"sara_doe_496\".\n\nOnce you provide your user ID, I'll be able to look up your reservation and understand the full situation with your delayed flight to Seattle.\n\nAdditionally, since you're a Gold member experiencing a delay, I can discuss available options including any potential compensation if you'd like to change or cancel your reservation. But first, I need to verify your details with your user ID.",
-    "flags": [
-      {
-        "kind": "unsupported-value",
-        "message": "The answer states values that no tool returned and the user never gave.",
-        "values": [
-          "sara_doe_496",
-          "sara"
-        ]
-      }
-    ]
-  },
-  {
-    "file": "sonnet-35-new-airline.json",
-    "task_id": 47,
-    "trial": 4,
-    "reward": 0,
-    "turn": 4,
-    "content": " In order to look up your reservation information, I'll need your user ID (which would be in a format like 'raj_sanchez_123'). For security reasons, I can only access reservation information through official user IDs or reservation IDs. \n\nCould you please provide your user ID? If you don't have it, you might find it in:\n- Your account profile if you're logged in\n- Your booking confirmation email\n- Any previous correspondence from the airline\n\nOnce you provide your user ID, I can help look up your reservations and assist with the cancellation.",
-    "flags": [
-      {
-        "kind": "unsupported-value",
-        "message": "The answer states values that no tool returned and the user never gave.",
-        "values": [
-          "raj_sanchez_123"
-        ]
-      }
-    ]
-  },
-  {
-    "file": "sonnet-35-new-airline.json",
     "task_id": 48,
     "trial": 4,
     "reward": 0,
@@ -552,23 +482,6 @@
   },
   {
     "file": "sonnet-35-new-airline.json",
-    "task_id": 12,
-    "trial": 6,
-    "reward": 1,
-    "turn": 7,
-    "content": "\n\nI apologize, but I couldn't find a user account with ID 4739. Could you please double-check your user ID? It should be in a format similar to \"firstname_lastname_numbers\" (for example: \"sara_doe_496\"). This will help me locate your reservation correctly.\n\nOnce you provide the correct user ID, I'll be able to look up your reservation details and help you with the cancellation process.",
-    "flags": [
-      {
-        "kind": "unsupported-value",
-        "message": "The answer states values that no tool returned and the user never gave.",
-        "values": [
-          "firstname_lastname_numbers"
-        ]
-      }
-    ]
-  },
-  {
-    "file": "sonnet-35-new-airline.json",
     "task_id": 23,
     "trial": 6,
     "reward": 0,
@@ -580,23 +493,6 @@
         "message": "The answer states values that no tool returned and the user never gave.",
         "values": [
           "05-23"
-        ]
-      }
-    ]
-  },
-  {
-    "file": "sonnet-35-new-airline.json",
-    "task_id": 29,
-    "trial": 6,
-    "reward": 0,
-    "turn": 4,
-    "content": " I apologize, but for security and privacy reasons, I can only access reservation information using a specific user ID. I cannot look up reservations by name alone. \n\nYour user ID would be in the format like \"firstname_lastname_numbers\" that you use to log into your account. Could you please provide this user ID? Without it, I won't be able to access your reservation details or help with cancellations.",
-    "flags": [
-      {
-        "kind": "unsupported-value",
-        "message": "The answer states values that no tool returned and the user never gave.",
-        "values": [
-          "firstname_lastname_numbers"
         ]
       }
     ]
@@ -1455,23 +1351,6 @@
         "message": "The answer states values that no tool returned and the user never gave.",
         "values": [
           "7863"
-        ]
-      }
-    ]
-  },
-  {
-    "file": "sonnet-35-new-retail.json",
-    "task_id": 47,
-    "trial": 4,
-    "reward": 1,
-    "turn": 7,
-    "content": "\n\nI apologize, but I couldn't find your account with that email address. Let's try to find your account using your name and zip code instead. Could you please provide your:\n1. First name\n2. Last name\n3. Zip code\n\nAlso, I notice that the order ID you provided doesn't start with '#'. Could you please double-check the order ID? It should be in a format like '#W0000000'.",
-    "flags": [
-      {
-        "kind": "unsupported-value",
-        "message": "The answer states values that no tool returned and the user never gave.",
-        "values": [
-          "W0000000"
         ]
       }
     ]
