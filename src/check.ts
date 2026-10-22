@@ -153,6 +153,10 @@ function judge(before: Step[], answer: string): Verdict {
  */
 function seenVerbatim(v: string, haystack: string): boolean {
   if (/^\d{4,}$/.test(v)) return new RegExp(`\\d${v}(?!\\d)`).test(haystack);
+  // An ID system's standard prefix put on a number the user gave: they typed 9502127 and the
+  // agent asks "is it #W9502127?". Grounded only if those exact digits were said. (Round 4.)
+  const prefixed = /^[A-Za-z]{1,2}(\d{5,})$/.exec(v);
+  if (prefixed && new RegExp(`(?<![\\d])${prefixed[1]}(?!\\d)`).test(haystack)) return true;
   if (/^-?\d+(\.\d+)?$/.test(v)) return false; // short numbers: too easy to match by accident
   if (v.length < 3) return false;
   if (haystack.includes(v.toLowerCase())) return true;
