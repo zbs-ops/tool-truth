@@ -1,0 +1,410 @@
+[
+  {
+    "file": "gpt-4.1-2025-04-14_airline_default_gpt-4.1-2025-04-14_4trials.json",
+    "task_id": "16",
+    "trial": 1,
+    "turn": 13,
+    "content": "Your reservation M05KNL is for a one-way trip from Atlanta (ATL) to Philadelphia (PHL) with connecting flights through Chicago (ORD) on 2024-05-23.\n\nWould you like to change this reservation to the day after your original booking (2024-05-24) and switch to the cheapest available economy option for that day? Please confirm so I can proceed to search for available flights and options.",
+    "flags": [
+      {
+        "kind": "unsupported-value",
+        "message": "The answer states values that no tool returned and the user never gave.",
+        "values": [
+          "05-24",
+          "2024-05-24"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "gpt-4.1-2025-04-14_airline_default_gpt-4.1-2025-04-14_4trials.json",
+    "task_id": "16",
+    "trial": 0,
+    "turn": 13,
+    "content": "Here are the details for your reservations:\n\n1. Reservation M05KNL:\n   - Route: Atlanta (ATL) to Philadelphia (PHL) via Chicago (ORD)\n   - Flight numbers: HAT227 (ATL to ORD), HAT139 (ORD to PHL)\n   - Date: 2024-05-23\n   - Cabin: Business\n   - Passenger: Aarav Garcia\n\n2. Reservation UHDAHF:\n   - Route: Charlotte (CLT) to Los Angeles (LAX) round trip\n   - Not related to Atlanta or Philadelphia\n\nYour ATL to PHL flight is under reservation M05KNL. Would you like to proceed with changing this reservation to the cheapest available economy option for the day after your original flight (2024-05-24)? Please confirm so I can search for available flights and continue with the change.",
+    "flags": [
+      {
+        "kind": "unsupported-value",
+        "message": "The answer states values that no tool returned and the user never gave.",
+        "values": [
+          "05-24",
+          "2024-05-24"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "gpt-4.1-2025-04-14_airline_default_gpt-4.1-2025-04-14_4trials.json",
+    "task_id": "34",
+    "trial": 0,
+    "turn": 7,
+    "content": "Here’s a summary of your requested changes for reservation HXDUBJ:\n\n1. Move your outgoing flight (currently IAH → JFK → SFO on 2024-05-18) to a nonstop flight on 2024-05-19.\n2. Adjust your return flight from SFO to IAH from 2024-05-22 to 2024-05-23.\n3. Upgrade your entire trip to business class.\n4. Add two checked bags.\n\nBefore proceeding, please confirm:\n- You want both the outbound and return flights to be nonstop.\n- You want both flights in business class.\n- You want a total of two checked bags for the reservation.\n\nIs this correct? Please confirm so I can search for the new flights and show you the options and any price differences.",
+    "flags": [
+      {
+        "kind": "unsupported-value",
+        "message": "The answer states values that no tool returned and the user never gave.",
+        "values": [
+          "05-19",
+          "2024-05-19",
+          "05-23",
+          "2024-05-23"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "gpt-4.1-2025-04-14_airline_default_gpt-4.1-2025-04-14_4trials.json",
+    "task_id": "44",
+    "trial": 0,
+    "turn": 59,
+    "content": "Here’s a summary of your upcoming reservations and how they fit your requests:\n\n1. Reservations NM1VX1, KC18K6, and H8Q05L are in basic economy, which cannot be upgraded or modified to business class.\n2. Reservation S61CZX (economy, round trip LAX–CLT) and its flights:\n   - LAX–EWR (HAT228): ~5.5 hours (over 4 hours, eligible for cancellation)\n   - EWR–CLT (HAT043): ~2 hours (eligible for upgrade)\n   - CLT–EWR (HAT157): ~2 hours (eligible for upgrade)\n   - EWR–LAX (HAT041): ~5.5 hours (over 4 hours, eligible for cancellation)\n3. Reservation WUNA5K (economy, ORD–PHL round trip) has already been flown and cannot be changed.\n\nActions I can take:\n- Cancel S61CZX due to long-haul flights (LAX–EWR and EWR–LAX).\n- Upgrade the short-haul segments (EWR–CLT and CLT–EWR) to business class, but only if you wish to keep the reservation and not cancel it.\n- Basic economy bookings cannot be upgraded or modified.\n\nWould you like to:\n- Cancel the entire S61CZX reservation, or\n- Only cancel the long-haul segments and upgrade the short-haul ones?\n\nPlease confirm your preference, and I’ll also calculate the total cost for upgrading the eligible short-haul flights to business class before proceeding.",
+    "flags": [
+      {
+        "kind": "unsupported-value",
+        "message": "The answer states values that no tool returned and the user never gave.",
+        "values": [
+          "5.5"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "gpt-4.1-2025-04-14_airline_default_gpt-4.1-2025-04-14_4trials.json",
+    "task_id": "19",
+    "trial": 0,
+    "turn": 19,
+    "content": "There are three available direct flights from Houston (IAH) to Newark (EWR) on May 28:\n\n- HAT149: Departs 08:00, arrives 11:00\n- HAT195: Departs 14:00, arrives 17:00\n- HAT207: Departs 15:00, arrives 18:00 (this is your current return flight)\n\nSince you want a later flight on the same day, your current flight (HAT207) is already the latest available on May 28. Would you like me to check for the earliest available flight on May 29 instead?",
+    "flags": [
+      {
+        "kind": "unsupported-value",
+        "message": "The answer states values that no tool returned and the user never gave.",
+        "values": [
+          "05-29"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "gpt-4.1-2025-04-14_airline_default_gpt-4.1-2025-04-14_4trials.json",
+    "task_id": "20",
+    "trial": 1,
+    "turn": 31,
+    "content": "Your booking has been updated:\n\n- $250 was paid using your travel certificate.\n- The remaining $5 was charged to your credit card ending in 7447.\n\nYour reservation details remain the same:\n- JFK to ATL: Flight HAT136, departs 19:00, arrives 21:30\n- ATL to SEA: Flight HAT039, departs 22:00, arrives 03:00+1\n- Date: May 20th\n- 3 checked bags included (all free as a gold member)\n- No travel insurance\n\nIf you need anything else or want your reservation details sent to you, just let me know!",
+    "flags": [
+      {
+        "kind": "unsupported-value",
+        "message": "The answer states values that no tool returned and the user never gave.",
+        "values": [
+          "05-03"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "gpt-4.1-2025-04-14_airline_default_gpt-4.1-2025-04-14_4trials.json",
+    "task_id": "16",
+    "trial": 2,
+    "turn": 13,
+    "content": "Your reservation M05KNL is for your Atlanta (ATL) to Philadelphia (PHL) trip, with flights on May 23, 2024. \n\nWould you like to proceed with switching this reservation to the cheapest available economy flight for May 24, 2024? Please confirm so I can search for the best options and assist you with the change.",
+    "flags": [
+      {
+        "kind": "unsupported-value",
+        "message": "The answer states values that no tool returned and the user never gave.",
+        "values": [
+          "05-24",
+          "2024-05-24"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "gpt-4.1-2025-04-14_airline_default_gpt-4.1-2025-04-14_4trials.json",
+    "task_id": "16",
+    "trial": 3,
+    "turn": 13,
+    "content": "Your reservation M05KNL is for your Atlanta (ATL) to Philadelphia (PHL) trip, with flights on May 23, 2024. Would you like to proceed with switching this reservation to the cheapest available economy flight for May 24, 2024? Please confirm so I can search for the best option and assist you further.",
+    "flags": [
+      {
+        "kind": "unsupported-value",
+        "message": "The answer states values that no tool returned and the user never gave.",
+        "values": [
+          "05-24",
+          "2024-05-24"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "gpt-4.1-2025-04-14_airline_default_gpt-4.1-2025-04-14_4trials.json",
+    "task_id": "15",
+    "trial": 3,
+    "turn": 13,
+    "content": "Here are the details for your two reservations:\n\n1. Reservation ID: M05KNL\n   - Route: Atlanta (ATL) to Philadelphia (PHL)\n   - Trip type: One way\n   - Cabin: Business\n   - Flight date: 2024-05-23\n   - Passenger: Aarav Garcia\n\n2. Reservation ID: UHDAHF\n   - Route: Charlotte (CLT) to Los Angeles (LAX) (round trip)\n   - Cabin: Basic Economy\n   - Passenger: Liam Rossi\n\nYour Atlanta to Philadelphia trip is under reservation M05KNL. Would you like to proceed with changing this reservation to the cheapest economy flight from Atlanta to either Philadelphia or Newark for the day after your original flight (2024-05-24)? Please confirm so I can search for available options.",
+    "flags": [
+      {
+        "kind": "unsupported-value",
+        "message": "The answer states values that no tool returned and the user never gave.",
+        "values": [
+          "05-24",
+          "2024-05-24"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "gpt-4.1-2025-04-14_airline_default_gpt-4.1-2025-04-14_4trials.json",
+    "task_id": "12",
+    "trial": 2,
+    "turn": 17,
+    "content": "Here’s a summary of your requested changes:\n- Upgrade both passengers to business class for both flight segments (BOS-MCO and MCO-MSP).\n- Add 2 checked bags under your name.\n- You are a Gold member.\n\nFor Gold members in business class, each passenger gets 4 free checked bags. With 2 passengers, you have a total allowance of 8 free checked bags. Since you only want to add 2 checked bags, there will be no extra baggage fees.\n\nThe total cost for upgrading both passengers to business class for both flights is $1,698. This exceeds your stated budget of $650.\n\nWould you like to proceed with the business class upgrade at this price, or would you like to explore other options?",
+    "flags": [
+      {
+        "kind": "unsupported-value",
+        "message": "The answer states values that no tool returned and the user never gave.",
+        "values": [
+          "650"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "gpt-4.1-2025-04-14_airline_default_gpt-4.1-2025-04-14_4trials.json",
+    "task_id": "44",
+    "trial": 3,
+    "turn": 59,
+    "content": "Here’s a summary of your upcoming reservations and the actions I can take:\n\n1. Reservations in basic economy (NM1VX1, KC18K6, H8Q05L) cannot be upgraded to business class.\n2. For reservation S61CZX (LAX–CLT round trip, currently in economy):\n   - LAX–EWR (HAT228): 5.5 hours (over 4 hours) — this reservation will need to be cancelled.\n   - EWR–CLT (HAT043): 2 hours\n   - CLT–EWR (HAT157): 2 hours\n   - EWR–LAX (HAT041): 5.5 hours (over 4 hours)\n   - Since this reservation contains flights over 4 hours, it will be cancelled.\n3. Reservation WUNA5K (ORD–PHL round trip) has already started (one segment has landed), so no changes can be made.\n\nSummary of actions:\n- I will cancel reservation S61CZX (LAX–CLT round trip) because it contains flights longer than 4 hours.\n- No upgrades to business class are possible for your other reservations due to basic economy restrictions or completed flights.\n\nDo you confirm that you want to proceed with the cancellation of reservation S61CZX?",
+    "flags": [
+      {
+        "kind": "unsupported-value",
+        "message": "The answer states values that no tool returned and the user never gave.",
+        "values": [
+          "5.5"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "gpt-4.1-2025-04-14_airline_default_gpt-4.1-2025-04-14_4trials.json",
+    "task_id": "23",
+    "trial": 2,
+    "turn": 30,
+    "content": "The cheapest business class itinerary for your round trip (JFK → SFO on May 26, SFO → SEA → JFK on May 28) totals $2,445 for all three passengers.\n\nHere’s how your payment would be applied:\n- Certificates: $1,000 (fully used)\n- Gift cards: $327 (fully used)\n- Remaining amount to be charged to your Mastercard: $1,118\n\nWould you like to proceed with this change to your reservation, using your certificates and gift cards first, and charging the remaining $1,118 to your Mastercard? Please confirm to continue.",
+    "flags": [
+      {
+        "kind": "unsupported-value",
+        "message": "The answer states values that no tool returned and the user never gave.",
+        "values": [
+          "1118"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "gpt-4.1-2025-04-14_airline_default_gpt-4.1-2025-04-14_4trials.json",
+    "task_id": "23",
+    "trial": 3,
+    "turn": 23,
+    "content": "I’ve found several business class round-trip options for your travel dates (May 26: JFK to SFO, May 28: SFO to JFK). Here are the cheapest options:\n\nOption 1 (Cheapest overall, with one stop each way):\n- Outbound (May 26): JFK → SEA (HAT083, business $461), then SEA → SFO (HAT274, business $310)\n- Return (May 28): SFO → SEA (HAT204, business $248), then SEA → JFK (HAT100, business $259)\n- Total for 3 passengers: (461+310+248+259) × 3 = $3,828\n\nOption 2 (Cheapest direct outbound, one-stop return):\n- Outbound (May 26): JFK → SFO (HAT023, business $364)\n- Return (May 28): SFO → SEA (HAT204, business $248), then SEA → JFK (HAT100, business $259)\n- Total for 3 passengers: (364+248+259) × 3 = $2,613\n\nWould you like to proceed with Option 2, which is the cheapest with a direct outbound flight, or would you prefer another combination? Once you confirm, I’ll calculate how much your master card will be charged after applying your certificates and gift cards.",
+    "flags": [
+      {
+        "kind": "fabrication-after-failure",
+        "message": "The answer states concrete values after search_direct_flight (empty) returned nothing usable, and doesn't say so.",
+        "values": [
+          "2613"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "gpt-4.1-2025-04-14_retail_default_gpt-4.1-2025-04-14_4trials.json",
+    "task_id": "0",
+    "trial": 0,
+    "turn": 25,
+    "content": "Your exchange request has been submitted for the following items in order #W2378156:\n\n1. Mechanical Keyboard will be exchanged for the clicky, white backlight, full size variant.\n2. Smart Thermostat will be exchanged for the Google Assistant, black variant.\n\nA refund of $40.88 will be issued to your original credit card ending in 2478 due to the price difference. The order status is now \"exchange requested.\" You will receive an email with instructions on how to return the original items.\n\nIf you have any further questions or need additional assistance, please let me know!",
+    "flags": [
+      {
+        "kind": "unsupported-value",
+        "message": "The answer states values that no tool returned and the user never gave.",
+        "values": [
+          "40.88"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "gpt-4.1-2025-04-14_retail_default_gpt-4.1-2025-04-14_4trials.json",
+    "task_id": "1",
+    "trial": 0,
+    "turn": 25,
+    "content": "Your exchange request has been submitted for both items:\n\n- Mechanical Keyboard: exchanging to clicky, full size, white backlight\n- Smart Thermostat: exchanging to Google Assistant compatible, black\n\nA refund of $40.88 will be processed to your Mastercard ending in 2478, as the new items are less expensive. You will receive an email with instructions on how to return the original items.\n\nIf you have any other questions or need further assistance, please let me know!",
+    "flags": [
+      {
+        "kind": "unsupported-value",
+        "message": "The answer states values that no tool returned and the user never gave.",
+        "values": [
+          "40.88"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "gpt-4.1-2025-04-14_retail_default_gpt-4.1-2025-04-14_4trials.json",
+    "task_id": "64",
+    "trial": 0,
+    "turn": 27,
+    "content": "Thank you for clarifying your preferences. Based on your requirements, I will look for camera options that are both waterproof and have the highest available resolution within your price range (around $502).\n\nI will now review the available variants of our action cameras and present you with the best matching options.\nHere are the waterproof camera options available in our store that are closest to your price range and offer the highest resolution:\n\n1. 4K, Waterproof, Black – $466.75 (Item ID: 6700049080)\n2. 4K, Waterproof, Silver – $481.50 (Item ID: 6117189161)\n\nCurrently, there are no 5K waterproof camera variants available within your price range. Both options above are waterproof and offer 4K resolution, which is the highest available for waterproof models near $502.\n\nWould you like more details about either of these cameras, or are you ready to proceed with purchasing one of them? If so, please let me know which item you prefer.",
+    "flags": [
+      {
+        "kind": "unsupported-value",
+        "message": "The answer states values that no tool returned and the user never gave.",
+        "values": [
+          "502"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "gpt-4.1-2025-04-14_retail_default_gpt-4.1-2025-04-14_4trials.json",
+    "task_id": "0",
+    "trial": 1,
+    "turn": 23,
+    "content": "Thank you for your selections! Here’s a summary of your exchange:\n\n- Mechanical Keyboard: Exchanging to “clicky, white backlight, full size”\n- Smart Thermostat: Exchanging to “Google Assistant, black”\n- Payment method for price difference: Mastercard ending in 2478\n\nThere will be a refund of $40.88 to your Mastercard, as the new items cost less than your original items.\n\nPlease confirm (yes) if you’d like to proceed with this exchange, and I’ll process it right away.",
+    "flags": [
+      {
+        "kind": "unsupported-value",
+        "message": "The answer states values that no tool returned and the user never gave.",
+        "values": [
+          "40.88"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "gpt-4.1-2025-04-14_retail_default_gpt-4.1-2025-04-14_4trials.json",
+    "task_id": "15",
+    "trial": 1,
+    "turn": 13,
+    "content": "I have located your account and found your recent order. However, the order with the hiking boots has already been delivered, not pending. According to our policy, I can help you exchange delivered items, but I cannot modify or cancel delivered orders.\n\nWould you like to exchange your hiking boots for a size 8 instead? If so, please confirm that you want to proceed with the exchange, and let me know which payment method you’d like to use for any price difference (PayPal or your gift card). \n\nAlso, regarding your question about the boots’ material: the hiking boots in your order are made of synthetic material. \n\nPlease confirm if you’d like to proceed with the exchange, and provide your preferred payment method.",
+    "flags": [
+      {
+        "kind": "unsupported-value",
+        "message": "The answer states values that no tool returned and the user never gave.",
+        "values": [
+          "8"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "gpt-4.1-2025-04-14_retail_default_gpt-4.1-2025-04-14_4trials.json",
+    "task_id": "0",
+    "trial": 2,
+    "turn": 25,
+    "content": "Your exchange request has been submitted for the following items in order #W2378156:\n\n1. Mechanical Keyboard (linear, RGB, full size) → Mechanical Keyboard (clicky, white backlight, full size)\n2. Smart Thermostat (Apple HomeKit, black) → Smart Thermostat (Google Assistant, black)\n\nA refund of $40.88 will be issued to your Mastercard ending in 2478 due to the price difference. You will receive an email with instructions on how to return the original items.\n\nIf you have any more questions or need further assistance, please let me know!",
+    "flags": [
+      {
+        "kind": "unsupported-value",
+        "message": "The answer states values that no tool returned and the user never gave.",
+        "values": [
+          "40.88"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "gpt-4.1-2025-04-14_retail_default_gpt-4.1-2025-04-14_4trials.json",
+    "task_id": "99",
+    "trial": 1,
+    "turn": 37,
+    "content": "Your requests have been processed as follows:\n\n1. The bicycle and jigsaw puzzle from Order #W3916020 are being exchanged:\n   - Bicycle: Exchanged to a large frame, red, mountain type.\n   - Jigsaw Puzzle: Exchanged to a 1500-piece, art theme, intermediate difficulty puzzle.\n   - You will receive a refund of $14.96 to your Visa card for the price difference.\n\n2. The camera from Order #W4689314 is being exchanged for the 20MP, 3x zoom, SD card model.\n   - You will receive a refund of $71.59 to your Visa card for the price difference.\n\n3. The skateboard from Order #W8855135 has been cancelled for the reason “no longer needed.”\n   - The refund for the cancelled item will be processed to your Visa card within 5–7 business days.\n\nYou will receive follow-up emails with instructions for returning the exchanged items. If you need anything else, just let me know!",
+    "flags": [
+      {
+        "kind": "unsupported-value",
+        "message": "The answer states values that no tool returned and the user never gave.",
+        "values": [
+          "14.96"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "gpt-4.1-2025-04-14_retail_default_gpt-4.1-2025-04-14_4trials.json",
+    "task_id": "105",
+    "trial": 1,
+    "turn": 35,
+    "content": "Your request has been processed: both tea kettles from your order will be exchanged for the stainless steel, 2 liters, gas option. There is no extra cost, and you will actually receive a small refund of $6.04 to your gift card.\n\nYou will receive an email with instructions on how to return the original kettles. If you have any further questions or need assistance, please let me know!",
+    "flags": [
+      {
+        "kind": "unsupported-value",
+        "message": "The answer states values that no tool returned and the user never gave.",
+        "values": [
+          "6.04"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "gpt-4.1-2025-04-14_retail_default_gpt-4.1-2025-04-14_4trials.json",
+    "task_id": "0",
+    "trial": 3,
+    "turn": 29,
+    "content": "Your exchange request has been submitted:\n\n- The mechanical keyboard will be exchanged for the “clicky, white backlight, full size” version.\n- The smart thermostat will be exchanged for the “Google Assistant, black” version.\n- Your Mastercard ending in 2478 will be used for the price difference. You will receive a refund of $40.88 to your card.\n\nYou will receive an email with instructions on how to return the original items. If you have any further questions or need assistance with anything else, please let me know!",
+    "flags": [
+      {
+        "kind": "unsupported-value",
+        "message": "The answer states values that no tool returned and the user never gave.",
+        "values": [
+          "40.88"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "gpt-4.1-2025-04-14_retail_default_gpt-4.1-2025-04-14_4trials.json",
+    "task_id": "98",
+    "trial": 2,
+    "turn": 33,
+    "content": "{\n  \"message\": \"Your requests have been processed:\\n\\n1. The bicycle and jigsaw puzzle from order #W3916020 are being exchanged for your selected options. You will receive a refund of $20.55 to your credit card ending in 8484.\\n2. The digital camera from order #W4689314 is being exchanged for the 20MP version. You will receive a refund of $71.59 to your credit card ending in 8484.\\n3. The skateboard from order #W8855135 has been cancelled with the reason 'no longer needed.' The full order amount will be refunded to your original payment method (credit card ending in 6791) within 5-7 business days.\\n\\nYou will receive follow-up emails with instructions for returning the exchanged items. If you need anything else, please let me know!\"\n}",
+    "flags": [
+      {
+        "kind": "unsupported-value",
+        "message": "The answer states values that no tool returned and the user never gave.",
+        "values": [
+          "20.55"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "gpt-4.1-2025-04-14_retail_default_gpt-4.1-2025-04-14_4trials.json",
+    "task_id": "17",
+    "trial": 3,
+    "turn": 15,
+    "content": "To confirm, you would like to update the delivery address for order #W8665881 to:\n\n123 Elm Street, Suite 641, Austin, TX 78712, USA\n\nIs this correct? Please reply “yes” to proceed with the update, or let me know if any other changes are needed.",
+    "flags": [
+      {
+        "kind": "unsupported-value",
+        "message": "The answer states values that no tool returned and the user never gave.",
+        "values": [
+          "641"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "gpt-4.1-2025-04-14_retail_default_gpt-4.1-2025-04-14_4trials.json",
+    "task_id": "63",
+    "trial": 3,
+    "turn": 23,
+    "content": "To confirm, you want to:\n- Remove the original Bluetooth speaker (blue, 20 hours battery life, water resistance: yes, $302.67, item id: 3254583681) from your order.\n- Replace it with the cheapest available Bluetooth speaker (blue, 20 hours battery life, water resistance: no, $271.89, item id: 2635605237).\n- No other changes to your order.\n\nAfter this modification, your order status will change to \"pending (items modified)\" and no further modifications or cancellations will be possible for this order. The price difference will be refunded to your original payment method (PayPal).\n\nDo you confirm that you want to proceed with this change? Please reply “yes” to continue.",
+    "flags": [
+      {
+        "kind": "unsupported-value",
+        "message": "The answer states values that no tool returned and the user never gave.",
+        "values": [
+          "pending (items modified)"
+        ]
+      }
+    ]
+  }
+]

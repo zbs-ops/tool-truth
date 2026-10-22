@@ -60,8 +60,10 @@ export function extractValues(text: string): string[] {
 
   // Illustrations are not claims: "a code like 'ABC123'", "e.g. W0000000", "in the format
   // firstname_lastname_numbers". The example after the cue is dropped. (Round-2 dev set.)
+  // Backticks and guillemets count as quotes, "e.g. `A` or `B`" drops both, and stacked cues
+  // ("in a format like 'X'") don't swallow each other. (Round 3.)
   prose = prose.replace(
-    /\b(like|e\.g\.|eg\.|such as|for example|for instance|format(?: of)?|looks like|example:?)\s*[:,]?\s*['"‘“#]?[A-Za-z0-9_#-]+['"’”]?/gi,
+    /\b((?:(?:like|e\.g\.|eg\.|such as|for example|for instance|format(?: of)?|looks like|similar to|example:?)\s*)+)[:,]?\s*['"‘“`«#]?\s*[A-Za-z0-9_#-]+\s*['"’”`»]?(?:\s*(?:or|,)\s*['"‘“`«#]?\s*[A-Za-z0-9_#-]+\s*['"’”`»]?)*/gi,
     '$1 ',
   );
   // Hedged numbers are approximations, not exact claims: "about $46 to $54", "above $270",
@@ -131,6 +133,26 @@ export function normalizeNumber(raw: string): string | null {
   const cleaned = raw.replace(/[$€£%,\s]/g, '');
   if (cleaned === '' || cleaned === '-' || Number.isNaN(Number(cleaned))) return null;
   return String(Number(cleaned));
+}
+
+/**
+ * Does this value look like an identifier (an order number, item ID, booking reference, user
+ * ID) rather than an amount, date, unit, or phrase? An ID has no formatting variants, so an
+ * ungrounded one is far more likely to be invented than a badly normalized "750 ml".
+ *
+ *  - six or more digits and nothing else: `5565470`, `7696410293`
+ *  - five or more letters, digits and underscores, with both letters and digits, that isn't a
+ *    number with a short unit or ordinal stuck on (`750ml`, `512gb`, `120th`): `B1234567`,
+ *    `JG7FMM`, `raj_sanchez_123`. A word with a single digit (`address1`) is a field name.
+ */
+export function isIdShaped(value: string): boolean {
+  if (/^\d{6,}$/.test(value)) return true;
+  if (!/^[A-Za-z0-9_]{5,}$/.test(value)) return false;
+  if (!/\d/.test(value) || !/[A-Za-z]/.test(value)) return false;
+  if (/^\d+[A-Za-z]{1,3}$/.test(value)) return false;
+  // A word with one digit on it is a field name (`address1`), not a code; codes like `JG7FMM`
+  // are all capitals.
+  return (value.match(/\d/g) ?? []).length >= 2 || !/[a-z]/.test(value);
 }
 
 /**
