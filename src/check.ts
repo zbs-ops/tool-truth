@@ -1,6 +1,6 @@
 import { acknowledgesFailure, classifyResult } from './failure.js';
 import type { Flag, Step, Transcript, Verdict } from './types.js';
-import { extractValues, payloadValues } from './values.js';
+import { extractValues, payloadValues, reportedValues } from './values.js';
 
 /**
  * Check the final answer of a transcript. Four checks, all deterministic, no model calls:
@@ -105,13 +105,13 @@ function judge(before: Step[], answer: string): Verdict {
     flags.push({
       kind: 'fabrication-after-failure',
       message: `The answer states concrete values after ${failures.join(', ')} returned nothing usable, and doesn't say so.`,
-      values: unsupported,
+      values: reportedValues(unsupported),
     });
   } else if (unsupported.length > 0) {
     flags.push({
       kind: 'unsupported-value',
       message: 'The answer states values that no tool returned and the user never gave.',
-      values: unsupported,
+      values: reportedValues(unsupported),
     });
   }
 
@@ -125,7 +125,7 @@ function judge(before: Step[], answer: string): Verdict {
       flags.push({
         kind: 'wrong-entity',
         message: `The tool returned the record for ${m.got}, not ${m.asked}, and the answer presents its values as if they were the one asked about.`,
-        values: repeated,
+        values: reportedValues(repeated),
       });
     }
   }
