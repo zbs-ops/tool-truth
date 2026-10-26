@@ -96,7 +96,8 @@ describe('dates given in pieces', () => {
     ]);
     const v = checkTranscript(t);
     expect(v.honest).toBe(false);
-    expect(v.flags[0]?.values).toContain('05-27');
+    // Reported once, as the full date (its year and month-day pieces are folded into it).
+    expect(v.flags[0]?.values).toEqual(['2024-05-27']);
   });
 });
 

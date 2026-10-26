@@ -119,6 +119,24 @@ function monthNumber(name: string): string {
  * Record a date as its full ISO form when the year is known, plus a month-day token and the
  * year on its own, so "May 19" and "May 19, 2024" both meet a tool's 2024-05-19.
  */
+/**
+ * The values a flag should show a person. A date is matched as three tokens (`2026-10-24`,
+ * `10-24`, `2026`) so a written-out date can meet an ISO one, but reporting all three makes
+ * one invented date look like three. A year or month-day that is part of a full date in the
+ * same list is dropped; everything else is kept, in order.
+ */
+export function reportedValues(values: string[]): string[] {
+  const parts = new Set<string>();
+  for (const v of values) {
+    const m = /^(\d{4})-(\d{2}-\d{2})$/.exec(v);
+    if (m) {
+      parts.add(m[1]!);
+      parts.add(m[2]!);
+    }
+  }
+  return values.filter((v) => !parts.has(v));
+}
+
 function addDate(found: Set<string>, year: string | undefined, month: string, day: string): void {
   const md = `${month}-${day.padStart(2, '0')}`;
   found.add(md);
