@@ -7,12 +7,13 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { isIdShaped } from '../src/values.js';
+import { TAU2_CACHE } from './fetch-cached.js';
 
 interface Flagged { file: string; task_id: string; trial: number; content: string; flags: { kind: string; values?: string[] }[] }
 interface Msg { role: string; content: string | null; tool_calls?: unknown }
 
 const all = JSON.parse(readFileSync(process.argv[2] as string, 'utf8')) as Flagged[];
-const cache = process.argv[3] ?? join(process.env.HOME ?? '.', '.cache', 'tool-truth-tau2');
+const cache = process.argv[3] ?? TAU2_CACHE;
 const files = new Map<string, { simulations: { task_id: string; trial: number; messages: Msg[] }[] }>();
 
 let n = 0;

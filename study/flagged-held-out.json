@@ -29,7 +29,6 @@
         "message": "The answer states values that no tool returned and the user never gave.",
         "values": [
           "1992-03-22",
-          "11-30",
           "2018-11-30"
         ]
       }
@@ -304,7 +303,6 @@
         "kind": "unsupported-value",
         "message": "The answer states values that no tool returned and the user never gave.",
         "values": [
-          "05-16",
           "2024-05-16"
         ]
       }
@@ -509,9 +507,7 @@
         "kind": "unsupported-value",
         "message": "The answer states values that no tool returned and the user never gave.",
         "values": [
-          "03-22",
           "1992-03-22",
-          "11-30",
           "2018-11-30"
         ]
       }

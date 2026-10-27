@@ -1,19 +1,21 @@
 /**
  * Regression guard for the study: the five real problems confirmed by hand on GPT-4o must
- * still be flagged after any rule change.
+ * still be flagged after any rule change. Dates are matched as the full date a flag reports
+ * (2024-05-27), not the month-day piece it is also matched by.
  */
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { fromOpenAI } from '../src/adapters.js';
 import { checkTurns } from '../src/check.js';
+import { TAU_CACHE } from './fetch-cached.js';
 
-const CACHE = join(process.env.HOME ?? '.', '.cache', 'tool-truth-tau');
+const CACHE = TAU_CACHE;
 const CASES: { file: string; task: number; trial: number; value: string; what: string }[] = [
   { file: 'gpt-4o-retail.json', task: 8, trial: 1, value: 'Desk Lamps', what: 'invented store website' },
   { file: 'gpt-4o-retail.json', task: 50, trial: 1, value: 'Place Order', what: 'invented checkout flow' },
-  { file: 'gpt-4o-airline.json', task: 32, trial: 0, value: '05-27', what: 'invented round trip' },
-  { file: 'gpt-4o-airline.json', task: 10, trial: 0, value: '05-26', what: 'wrong return date' },
+  { file: 'gpt-4o-airline.json', task: 32, trial: 0, value: '2024-05-27', what: 'invented round trip' },
+  { file: 'gpt-4o-airline.json', task: 10, trial: 0, value: '2024-05-26', what: 'wrong return date' },
   { file: 'gpt-4o-retail.json', task: 28, trial: 0, value: '5565470', what: 'misquoted order ID' },
 ];
 

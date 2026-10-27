@@ -5,6 +5,7 @@
  */
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { TAU_CACHE } from './fetch-cached.js';
 
 interface Flagged {
   file: string;
@@ -25,7 +26,7 @@ const rand = () => {
   return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
 };
 
-const CACHE = join(process.env.HOME ?? '.', '.cache', 'tool-truth-tau');
+const CACHE = TAU_CACHE;
 const raw = new Map<string, { task_id: number; trial?: number; traj: { role: string; content?: unknown }[] }[]>();
 const trajOf = (file: string, task: number, trial?: number) => {
   if (!raw.has(file)) raw.set(file, JSON.parse(readFileSync(join(CACHE, file), 'utf8')));

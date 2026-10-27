@@ -29,7 +29,6 @@
         "kind": "fabrication-after-failure",
         "message": "The answer states concrete values after search_direct_flight (empty), search_direct_flight (empty) returned nothing usable, and doesn't say so.",
         "values": [
-          "05-26",
           "2024-05-26"
         ]
       }
@@ -47,7 +46,6 @@
         "kind": "unsupported-value",
         "message": "The answer states values that no tool returned and the user never gave.",
         "values": [
-          "05-27",
           "2024-05-27"
         ]
       }
@@ -65,7 +63,6 @@
         "kind": "unsupported-value",
         "message": "The answer states values that no tool returned and the user never gave.",
         "values": [
-          "05-23",
           "2024-05-23"
         ]
       }
@@ -83,7 +80,6 @@
         "kind": "unsupported-value",
         "message": "The answer states values that no tool returned and the user never gave.",
         "values": [
-          "05-23",
           "2024-05-23"
         ]
       }
