@@ -3,14 +3,15 @@
  * 7 digits and item IDs are 10 digits, so a plain scan can find every one an agent states that
  * never appeared earlier in the conversation (user, tool, or the agent's own tool calls).
  * It doesn't know about examples or confirmations, so its hits are candidates, not verdicts.
- *   npx tsx study/id-oracle.ts <tau2 retail file in ~/.cache/tool-truth-tau2>
+ *   npx tsx study/id-oracle.ts <tau2 retail file in the τ²-bench cache (see fetch-cached.ts)>
  */
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { TAU2_CACHE } from './fetch-cached.js';
 
 interface Msg { role: string; content: string | null; tool_calls?: unknown }
 const file = process.argv[2] as string;
-const data = JSON.parse(readFileSync(join(process.env.HOME ?? '.', '.cache', 'tool-truth-tau2', file), 'utf8')) as {
+const data = JSON.parse(readFileSync(join(TAU2_CACHE, file), 'utf8')) as {
   simulations: { task_id: string; trial: number; messages: Msg[] }[];
 };
 

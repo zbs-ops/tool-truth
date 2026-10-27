@@ -26,7 +26,6 @@
         "kind": "unsupported-value",
         "message": "The answer states values that no tool returned and the user never gave.",
         "values": [
-          "05-24",
           "2024-05-24"
         ]
       }
@@ -43,7 +42,6 @@
         "kind": "unsupported-value",
         "message": "The answer states values that no tool returned and the user never gave.",
         "values": [
-          "05-21",
           "2024-05-21"
         ]
       }
@@ -241,7 +239,6 @@
         "kind": "unsupported-value",
         "message": "The answer states values that no tool returned and the user never gave.",
         "values": [
-          "05-01",
           "2024-05-01"
         ]
       }
@@ -1669,9 +1666,7 @@
         "kind": "unsupported-value",
         "message": "The answer states values that no tool returned and the user never gave.",
         "values": [
-          "06-01",
           "2024-06-01",
-          "2024",
           "W0023456",
           "1001112223",
           "1003334445",
@@ -1756,11 +1751,8 @@
         "kind": "unsupported-value",
         "message": "The answer states values that no tool returned and the user never gave.",
         "values": [
-          "04-15",
           "2024-04-15",
-          "05-02",
           "2024-05-02",
-          "06-10",
           "2024-06-10"
         ]
       }

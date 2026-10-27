@@ -11,7 +11,10 @@ using real tools against a simulated customer. **660 conversations, 4,937 agent 
 Every agent turn is checked against only what came before it (`checkTurns`).
 
 **Reproduce:** `npx tsx study/tau-bench.ts --dump` (downloads the trajectories), then
-`npx tsx study/review.ts 36 1` to see every flagged turn with evidence.
+`npx tsx study/review.ts 36 1` to see every flagged turn with evidence. `sh study/run-all.sh`
+re-runs every study in this file against pinned commits of the τ-bench and τ²-bench data
+(`study/fetch-cached.ts`), and CI runs it on every change: it fails if a committed result
+file changes or one of the five hand-confirmed real catches stops being flagged.
 
 ## 1. The first version was unusable on real logs
 

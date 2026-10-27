@@ -7,20 +7,20 @@
  *   npx tsx study/tau-bench.ts --held-out            # Claude 3.5 Sonnet (never looked at while tuning)
  *   add --dump to write every flagged turn to study/flagged.json (or flagged-held-out.json)
  */
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { fromOpenAI } from '../src/adapters.js';
+import { TAU_BENCH_COMMIT, TAU_CACHE, fetchCached } from './fetch-cached.js';
 import { checkTurns } from '../src/check.js';
 import type { FlagKind } from '../src/types.js';
 
-const BASE = 'https://raw.githubusercontent.com/sierra-research/tau-bench/main/historical_trajectories/';
+const BASE = `https://raw.githubusercontent.com/sierra-research/tau-bench/${TAU_BENCH_COMMIT}/historical_trajectories/`;
 const HELD_OUT = process.argv.includes('--held-out');
 const FILES = HELD_OUT
   ? ['sonnet-35-new-airline.json', 'sonnet-35-new-retail.json']
   : ['gpt-4o-airline.json', 'gpt-4o-retail.json'];
 const OUT = HELD_OUT ? 'flagged-held-out.json' : 'flagged.json';
-const CACHE = join(process.env.HOME ?? '.', '.cache', 'tool-truth-tau');
 
 interface Trajectory {
   task_id: number;
@@ -30,14 +30,7 @@ interface Trajectory {
 }
 
 async function load(file: string): Promise<Trajectory[]> {
-  mkdirSync(CACHE, { recursive: true });
-  const path = join(CACHE, file);
-  if (!existsSync(path)) {
-    const res = await fetch(BASE + file);
-    if (!res.ok) throw new Error(`fetch ${file}: ${res.status}`);
-    writeFileSync(path, await res.text());
-  }
-  return JSON.parse(readFileSync(path, 'utf8')) as Trajectory[];
+  return JSON.parse(await fetchCached(BASE + file, join(TAU_CACHE, file))) as Trajectory[];
 }
 
 async function main(): Promise<void> {

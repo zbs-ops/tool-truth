@@ -5,14 +5,15 @@
  *
  *   npx tsx study/tau2-bench.ts [--dump]
  */
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
+import { TAU2_BENCH_COMMIT, TAU2_CACHE, fetchCached } from './fetch-cached.js';
 import { checkTurns } from '../src/check.js';
 import type { FlagKind, Step, Transcript } from '../src/types.js';
 import { stripToolMarkup } from '../src/adapters.js';
 
-const BASE = 'https://raw.githubusercontent.com/sierra-research/tau2-bench/main/data/tau2/results/final/';
+const BASE = `https://raw.githubusercontent.com/sierra-research/tau2-bench/${TAU2_BENCH_COMMIT}/data/tau2/results/final/`;
 // --model picks another agent model from the same published results (default: o4-mini, the
 // round-2 test set). Round 3's held-out sets: claude-3-7-sonnet-20250219 and gpt-4.1-2025-04-14.
 // Round 4's: gpt-4.1-mini-2025-04-14 with --setting base (that's how its files are named).
@@ -20,7 +21,6 @@ const MODEL = process.argv.includes('--model') ? (process.argv[process.argv.inde
 const SETTING = process.argv.includes('--setting') ? (process.argv[process.argv.indexOf('--setting') + 1] as string) : 'default';
 const FILES = ['airline', 'retail'].map((d) => `${MODEL}_${d}_${SETTING}_gpt-4.1-2025-04-14_4trials.json`);
 const OUT = MODEL === 'o4-mini-2025-04-16' ? 'flagged-tau2.json' : `flagged-tau2-${MODEL.split('-2025')[0]}.json`;
-const CACHE = join(process.env.HOME ?? '.', '.cache', 'tool-truth-tau2');
 
 interface Tau2Message {
   role: 'assistant' | 'user' | 'tool';
@@ -70,10 +70,7 @@ export function fromTau2(policy: string, messages: Tau2Message[]): Transcript {
 }
 
 async function load(file: string): Promise<Tau2File> {
-  mkdirSync(CACHE, { recursive: true });
-  const path = join(CACHE, file);
-  if (!existsSync(path)) writeFileSync(path, await (await fetch(BASE + file)).text());
-  return JSON.parse(readFileSync(path, 'utf8')) as Tau2File;
+  return JSON.parse(await fetchCached(BASE + file, join(TAU2_CACHE, file))) as Tau2File;
 }
 
 async function main(): Promise<void> {

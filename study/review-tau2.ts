@@ -5,6 +5,7 @@
  */
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { TAU2_CACHE } from './fetch-cached.js';
 
 interface Flagged { file: string; task_id: string; trial: number; content: string; flags: { kind: string; values?: string[] }[] }
 interface Msg { role: string; content: string | null; tool_calls?: { name: string; arguments: unknown }[] | null }
@@ -19,7 +20,7 @@ const rand = () => {
   return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
 };
 
-const CACHE = join(process.env.HOME ?? '.', '.cache', 'tool-truth-tau2');
+const CACHE = TAU2_CACHE;
 const files = new Map<string, { info: { environment_info: { policy: string } }; simulations: { task_id: string; trial: number; messages: Msg[] }[] }>();
 const all = JSON.parse(readFileSync('study/flagged-tau2.json', 'utf8')) as Flagged[];
 const idx = [...all.keys()];
