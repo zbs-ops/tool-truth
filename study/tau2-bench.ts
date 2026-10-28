@@ -10,8 +10,8 @@ import { join } from 'node:path';
 
 import { TAU2_BENCH_COMMIT, TAU2_CACHE, fetchCached } from './fetch-cached.js';
 import { checkTurns } from '../src/check.js';
-import type { FlagKind, Step, Transcript } from '../src/types.js';
-import { stripToolMarkup } from '../src/adapters.js';
+import type { FlagKind } from '../src/types.js';
+import { type Tau2File, fromTau2 } from './tau2-format.js';
 
 const BASE = `https://raw.githubusercontent.com/sierra-research/tau2-bench/${TAU2_BENCH_COMMIT}/data/tau2/results/final/`;
 // --model picks another agent model from the same published results (default: o4-mini, the
@@ -21,53 +21,6 @@ const MODEL = process.argv.includes('--model') ? (process.argv[process.argv.inde
 const SETTING = process.argv.includes('--setting') ? (process.argv[process.argv.indexOf('--setting') + 1] as string) : 'default';
 const FILES = ['airline', 'retail'].map((d) => `${MODEL}_${d}_${SETTING}_gpt-4.1-2025-04-14_4trials.json`);
 const OUT = MODEL === 'o4-mini-2025-04-16' ? 'flagged-tau2.json' : `flagged-tau2-${MODEL.split('-2025')[0]}.json`;
-
-interface Tau2Message {
-  role: 'assistant' | 'user' | 'tool';
-  content: string | null;
-  id?: string;
-  error?: boolean;
-  tool_calls?: { id: string; name: string; arguments: Record<string, unknown> | string }[] | null;
-}
-interface Tau2File {
-  info: { environment_info: { policy: string } };
-  simulations: { task_id: string; trial: number; messages: Tau2Message[] }[];
-}
-
-function parse(content: string | null): unknown {
-  if (content === null) return null;
-  const s = content.trim();
-  if (s.startsWith('{') || s.startsWith('[')) {
-    try {
-      return JSON.parse(s);
-    } catch {
-      return content;
-    }
-  }
-  return content;
-}
-
-/** τ²-bench's message format onto tool-truth steps. The domain policy is the agent's system context. */
-export function fromTau2(policy: string, messages: Tau2Message[]): Transcript {
-  const steps: Step[] = [{ role: 'system', content: policy }];
-  const names = new Map<string, string>();
-  for (const m of messages) {
-    if (m.role === 'user' && m.content) steps.push({ role: 'user', content: m.content });
-    else if (m.role === 'assistant') {
-      for (const c of m.tool_calls ?? []) {
-        names.set(c.id, c.name);
-        const args = typeof c.arguments === 'string' ? (parse(c.arguments) as Record<string, unknown>) ?? {} : c.arguments;
-        steps.push({ role: 'tool_call', id: c.id, tool: c.name, args });
-      }
-      const said = m.content ? stripToolMarkup(m.content) : '';
-      if (said.trim()) steps.push({ role: 'assistant', content: said });
-    } else if (m.role === 'tool') {
-      const id = m.id ?? '';
-      steps.push({ role: 'tool_result', id, tool: names.get(id) ?? 'unknown', status: m.error ? 'error' : 'ok', payload: parse(m.content) });
-    }
-  }
-  return { steps };
-}
 
 async function load(file: string): Promise<Tau2File> {
   return JSON.parse(await fetchCached(BASE + file, join(TAU2_CACHE, file))) as Tau2File;
