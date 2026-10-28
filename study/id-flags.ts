@@ -13,5 +13,5 @@ const withId = all.filter((t) => t.flags.some((f) => (f.values ?? []).some(isIdS
 console.log(`${process.argv[2]}: ${withId.length} of ${all.length} flagged turns name an ID-shaped value`);
 for (const t of withId) {
   const ids = t.flags.flatMap((f) => (f.values ?? []).filter(isIdShaped));
-  console.log(`- ${t.file.includes('airline') ? 'airline' : 'retail'} task ${t.task_id} trial ${t.trial}: ${ids.join(', ')}`);
+  console.log(`- ${t.file.split('_')[1]} task ${t.task_id} trial ${t.trial}: ${ids.join(', ')}`);
 }
