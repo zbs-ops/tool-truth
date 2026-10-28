@@ -120,6 +120,13 @@ turn against only what came before it. Full write-up: [study/RESULTS.md](study/R
   one more round, and **0 flags on GPT-4.1 and GPT-4.1-mini**, where the independent scan
   confirms there were no invented retail IDs to find. Those models just didn't invent IDs, so
   precision on an unseen model that *does* is still untested.
+- **A different kind of conversation: tech support (τ²-bench telecom, 4,474 turns, rules
+  frozen).** 80 flags, all read by hand: **1 real** (the agent made up a full APN config,
+  `mms.carrier.com` and all, and told the customer to save it on their phone) and 79 false
+  alarms, mostly instructions like "wait 10 seconds" and network-mode wording. In tech support
+  most numbers are instructions, not facts, and a provenance check can't tell the two apart.
+  The ID view raised 0 flags there, and an independent scan confirms there were no invented IDs
+  to find.
 
 For multi-turn logs, use `checkTurns(transcript)` to get a verdict for every agent turn. For the
 short list worth acting on first, pass a verdict to `idFlags`.
