@@ -209,3 +209,49 @@ there were no invented retail IDs for the ID view to miss.
 this data that invents IDs, and silent, with no false alarms after round 4, on three models that
 don't. What it can't show yet is precision on an *unseen* model that invents IDs, because none of
 the held-out models did. Its recall outside retail-format IDs isn't measured.
+
+## 8. A new kind of conversation: τ²-bench telecom (round 5, rules frozen)
+
+**Question.** Every set so far was airline or retail: the agent looks things up and states
+facts (dates, prices, order numbers). τ²-bench's telecom domain is tech support. The agent
+walks a customer through fixing their phone, and the customer's phone has tools of its own
+(`check_network_status`, `toggle_airplane_mode`). How does a value checker do when most of what
+the agent says is instructions, not facts?
+
+**One fix first.** Those phone tools return their results to the *user*, not the agent. The
+adapter used to feed them in as agent evidence, which would hide an invented value that happened
+to match. They're dropped now (`study/tau2-format.ts`, 4 tests, 2 of which fail without the
+fix). On this data it changed nothing: 80 flags before and after. Airline and retail have no user
+tools, and every committed result file re-ran identical.
+
+**Run once, rules frozen:** o4-mini, 456 conversations, 4,474 agent turns
+(`npx tsx study/tau2-bench.ts --domain telecom --dump`). **80 flagged turns (1.8%).** I read all
+80 (`npx tsx study/review-tau2.ts 80 99 study/flagged-tau2-telecom.json`); labels are in
+`study/labels-tau2-telecom.json`.
+
+| Category | Turns |
+|---|---|
+| **Real problem: invented settings** | **1** |
+| Network-mode wording ("4G/5G-preferred", "2G-only"; the tool says `4g_5g_preferred`) | 38 |
+| Numbers in instructions ("wait 10 seconds", "your 10-digit number", "30–60 seconds") | 25 |
+| Phone diagnostic codes (`*#*#4636#*#*`, `*3001#12345#*`) | 9 |
+| Examples and placeholders ("e.g. 0.5 GB, 1 GB, 2 GB", `<permission>`, "IPv4/IPv6") | 4 |
+| Part of a value it was given ("your line ending in 2002") | 2 |
+| Correct arithmetic (15 + 2 − 15.1 = "1.9 GB remaining") | 1 |
+
+**The real one:** asked to fix MMS, the agent told the customer to write a full APN config
+it made up: name "Carrier MMS", APN `mms.carrier.com`, an MMSC URL, proxy and port. None of it came
+from any tool, and the customer's phone would have saved it. (mms_issue task, trial 2)
+
+**The ID view:** 0 flags. To check that it wasn't missing anything, `study/id-oracle.ts` now
+also scans for telecom IDs (one letter plus four digits: C1001, L1002, P1002, D1001). 31 agent
+turns name such an ID (41 mentions), and **every one was seen earlier**, so o4-mini invented no
+telecom IDs for the view to catch.
+
+**What that means.** Precision here is 1 in 80, the lowest of any set. The cause is different
+this time, and so is the lesson: it's not a new writing style, it's a new *kind* of answer. In tech
+support most numbers are instructions ("wait 10 seconds"), which are neither grounded nor
+invented, and a provenance check has no way to tell them from claims. The one real catch (a
+made-up configuration the customer would type in) is exactly the harm the tool exists for, so
+the full checker is still a triage list here, but a noisy one. The ID view stayed silent and
+correct. Outside lookup-and-answer domains, read value flags with that in mind.
