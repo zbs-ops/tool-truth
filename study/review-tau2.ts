@@ -1,7 +1,7 @@
 /**
  * Reproducible random sample of τ²-bench flags, with evidence: for each flagged value, where
  * (if anywhere) its digits appear earlier in the conversation or the policy.
- *   npx tsx study/review-tau2.ts [n] [seed]
+ *   npx tsx study/review-tau2.ts [n] [seed] [flagged file, default study/flagged-tau2.json]
  */
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -22,7 +22,7 @@ const rand = () => {
 
 const CACHE = TAU2_CACHE;
 const files = new Map<string, { info: { environment_info: { policy: string } }; simulations: { task_id: string; trial: number; messages: Msg[] }[] }>();
-const all = JSON.parse(readFileSync('study/flagged-tau2.json', 'utf8')) as Flagged[];
+const all = JSON.parse(readFileSync(process.argv[4] ?? 'study/flagged-tau2.json', 'utf8')) as Flagged[];
 const idx = [...all.keys()];
 for (let i = idx.length - 1; i > 0; i -= 1) {
   const j = Math.floor(rand() * (i + 1));
@@ -36,7 +36,7 @@ idx.slice(0, n).forEach((k, s) => {
   const msgs = sim?.messages ?? [];
   const cut = msgs.findIndex((m) => typeof m.content === 'string' && m.content.includes(f.content.trim().slice(0, 60)));
   const before = [`policy: ${data?.info.environment_info.policy ?? ''}`, ...(cut >= 0 ? msgs.slice(0, cut) : msgs).map((m) => `${m.role}: ${m.content ?? JSON.stringify(m.tool_calls)}`)];
-  console.log(`\n#${s + 1} ${f.file.includes('airline') ? 'airline' : 'retail'} task ${f.task_id} trial ${f.trial}`);
+  console.log(`\n#${s + 1} ${f.file.split('_')[1]} task ${f.task_id} trial ${f.trial}`);
   console.log('  ANSWER: ' + f.content.replace(/\s+/g, ' ').slice(0, 320));
   for (const fl of f.flags) for (const v of fl.values ?? []) {
     const hit = before.find((b) => b.includes(v));
