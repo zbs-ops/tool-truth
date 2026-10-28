@@ -9,4 +9,5 @@ npx tsx study/tau2-bench.ts --dump
 npx tsx study/tau2-bench.ts --model gpt-4.1-2025-04-14 --dump
 npx tsx study/tau2-bench.ts --model gpt-4.1-mini-2025-04-14 --setting base --dump
 npx tsx study/tau2-bench.ts --model claude-3-7-sonnet-20250219 --dump
+npx tsx study/tau2-bench.ts --domain telecom --dump
 npx tsx study/real-catches.ts

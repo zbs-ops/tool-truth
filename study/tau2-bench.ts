@@ -19,8 +19,12 @@ const BASE = `https://raw.githubusercontent.com/sierra-research/tau2-bench/${TAU
 // Round 4's: gpt-4.1-mini-2025-04-14 with --setting base (that's how its files are named).
 const MODEL = process.argv.includes('--model') ? (process.argv[process.argv.indexOf('--model') + 1] as string) : 'o4-mini-2025-04-16';
 const SETTING = process.argv.includes('--setting') ? (process.argv[process.argv.indexOf('--setting') + 1] as string) : 'default';
-const FILES = ['airline', 'retail'].map((d) => `${MODEL}_${d}_${SETTING}_gpt-4.1-2025-04-14_4trials.json`);
-const OUT = MODEL === 'o4-mini-2025-04-16' ? 'flagged-tau2.json' : `flagged-tau2-${MODEL.split('-2025')[0]}.json`;
+// --domain telecom runs τ²-bench's third domain, where the user has tools too. It was never
+// looked at while writing any rule (round 5).
+const DOMAINS = process.argv.includes('--domain') ? [process.argv[process.argv.indexOf('--domain') + 1] as string] : ['airline', 'retail'];
+const FILES = DOMAINS.map((d) => `${MODEL}_${d}_${SETTING}_gpt-4.1-2025-04-14_4trials.json`);
+const SUFFIX = [MODEL === 'o4-mini-2025-04-16' ? '' : MODEL.split('-2025')[0], DOMAINS.length === 1 ? DOMAINS[0] : ''].filter(Boolean).join('-');
+const OUT = SUFFIX ? `flagged-tau2-${SUFFIX}.json` : 'flagged-tau2.json';
 
 async function load(file: string): Promise<Tau2File> {
   return JSON.parse(await fetchCached(BASE + file, join(TAU2_CACHE, file))) as Tau2File;
@@ -29,7 +33,7 @@ async function load(file: string): Promise<Tau2File> {
 async function main(): Promise<void> {
   const dump = process.argv.includes('--dump');
   const flagged: unknown[] = [];
-  const lines = ['tool-truth on τ²-bench (o4-mini, third test set, rules frozen)', ''];
+  const lines = [`tool-truth on τ²-bench (${MODEL}, ${DOMAINS.join(' + ')}, rules frozen)`, ''];
   for (const file of FILES) {
     const data = await load(file);
     let turns = 0;
