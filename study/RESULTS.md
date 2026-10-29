@@ -255,3 +255,42 @@ invented, and a provenance check has no way to tell them from claims. The one re
 made-up configuration the customer would type in) is exactly the harm the tool exists for, so
 the full checker is still a triage list here, but a noisy one. The ID view stayed silent and
 correct. Outside lookup-and-answer domains, read value flags with that in mind.
+
+## 9. Telecom on two more models (round 6, rules frozen)
+
+**Question.** Is round 5's telecom result (1 real catch in 80 flags, ID view silent) about
+o4-mini, or about the domain? Same rules, run once on the two other models τ²-bench published
+for telecom.
+
+| Model | Agent turns | Flagged | ID flags | Invented telecom IDs (oracle) |
+|---|---|---|---|---|
+| o4-mini (round 5) | 4,474 | 80 (1.8%) | 0 | 0 of 41 mentions |
+| GPT-4.1 | 5,440 | 280 (5.1%) | 0 | none to find: it never names a telecom ID |
+| Claude 3.7 Sonnet | 7,426 | 1,084 (14.6%) | 0 | 0 of 72 mentions |
+
+**By hand:** too many flags to read them all this time, so a seeded random 30 from **all** flags
+per model (`npx tsx study/sample-flags.ts <file> 30 99`). **0 of 30 real on GPT-4.1, 0 of 30 on
+Claude 3.7.**
+
+What the flags are, by value across the whole file:
+
+- **`15GB`** (169 GPT-4.1 turns, 172 Claude 3.7): the plan's `"data_limit_gb": 15.0`, restated.
+  The checker reads `15GB` as an ID-like token, while `8.7GB` in the same sentence passes. A checker
+  error.
+- **"your line ending in 2002"** (109 GPT-4.1 turns): the last digits of the number the customer gave.
+- **Quoted phone menu labels** (most Claude 3.7 flags): "Network & Internet", "Preferred Network
+  Type", "Reset to default". Claude walks people through settings screens and quotes every label.
+- **Quote pairing:** with mixed straight and curly quotes, the checker sometimes pairs the wrong
+  marks and flags the text *between* two quotes (`), or if it simply shows`). A checker bug.
+- Correct arithmetic (15 + 2 = "17GB", "1.9 GB remaining"), generic advice ("peak hours 12pm to
+  2pm", carrier dialer codes).
+
+**A caution on bucketing.** Sorting flags by pattern is how the table above was built, but it isn't
+a verdict: the same rules applied to o4-mini file its one real invention ("Carrier MMS") under
+"quoted menu label". That's why the hand review samples from all flags, not from what's left over.
+
+**What that means.** Round 5 wasn't about o4-mini. On tech support the full checker is noise on
+every model tried, and the noise grows with how much the model quotes the screen (Claude 3.7: 1 in 7
+turns flagged). The ID view stayed silent and correct on all three: 0 flags, and the oracle confirms
+no telecom ID was invented. Two concrete checker bugs came out of this (`15GB` as a token, quote
+pairing). Fixing them would mean tuning on these files, so a fix needs fresh data to be tested on.
