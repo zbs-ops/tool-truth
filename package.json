@@ -1,6 +1,6 @@
 {
   "name": "tool-truth",
-  "version": "0.5.3",
+  "version": "0.5.4",
   "description": "Flags AI agent answers that state facts their tools never returned, especially after a tool quietly failed.",
   "type": "module",
   "license": "MIT",
