@@ -127,6 +127,10 @@ turn against only what came before it. Full write-up: [study/RESULTS.md](study/R
   most numbers are instructions, not facts, and a provenance check can't tell the two apart.
   The ID view raised 0 flags there, and an independent scan confirms there were no invented IDs
   to find.
+- **Same domain, two more models (GPT-4.1, Claude 3.7 Sonnet, rules frozen):** 280 and 1,084 flags,
+  0 real in a random 30 from each. Mostly a plan limit restated as `15GB`, "line ending in 2002", and
+  (Claude) quoted phone menu labels. The ID view: 0 flags on both, and the independent scan finds no
+  invented telecom IDs. On tech support, trust the ID view and treat the full checker as noise.
 
 For multi-turn logs, use `checkTurns(transcript)` to get a verdict for every agent turn. For the
 short list worth acting on first, pass a verdict to `idFlags`.
