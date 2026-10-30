@@ -86,9 +86,18 @@ export function extractValues(text: string): string[] {
       else if (/^[A-Za-z]{3,}$/.test(part) && m[0].includes('_')) found.add(part.toLowerCase());
     }
   }
+  // A number glued to a unit ("15GB", "8.7GB", "250ms") is a number, not a code: it has to
+  // meet the tool's data_limit_gb: 15.0. Multi-letter units only, so "5G" and "4K" stay out.
+  // (Round 6 dev set: 15GB was ~170 of each model's telecom flags.)
+  for (const m of prose.matchAll(UNIT_NUMBER)) {
+    const n = normalizeNumber(m[1] ?? '');
+    if (n !== null && !isTrivial(n)) found.add(n);
+  }
   // Codes that mix letters and digits with no separator: HAT266, M20IZO, W5272531. Taken
   // whole, so their digits are never read as a separate number.
-  for (const m of prose.matchAll(/\b(?=[A-Za-z0-9]*\d)(?=[A-Za-z0-9]*[A-Za-z])[A-Za-z0-9]{4,}\b/g)) found.add(m[0]);
+  for (const m of prose.matchAll(/\b(?=[A-Za-z0-9]*\d)(?=[A-Za-z0-9]*[A-Za-z])[A-Za-z0-9]{4,}\b/g)) {
+    if (!new RegExp(`^${UNIT_NUMBER.source}$`, 'i').test(m[0])) found.add(m[0]);
+  }
   // Quoted strings, without the punctuation American style puts inside the quotes
   // ("return requested." vs a returned value of return requested).
   for (const m of prose.matchAll(/"([^"\n]{2,80})"/g)) {
@@ -106,6 +115,10 @@ export function extractValues(text: string): string[] {
   }
   return [...found];
 }
+
+/** A number with a multi-letter unit glued on: 15GB, 8.7GB, 512MB, 250ms, 750ml. */
+const UNIT_NUMBER =
+  /(?<![A-Za-z0-9_.-])(\d+(?:\.\d+)?)(?:TB|GB|MB|KB|TiB|GiB|MiB|KiB|Gbps|Mbps|kbps|ms|GHz|MHz|kHz|mAh|ml|mL|kg|mg|km|cm|mm)(?![A-Za-z0-9_])/g;
 
 const MONTH_NAMES = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
 const MONTHS =
