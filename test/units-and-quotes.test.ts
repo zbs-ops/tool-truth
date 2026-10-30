@@ -52,3 +52,18 @@ describe('a number glued to a unit is a number, not a code', () => {
     expect(checkTurns(t).at(-1)?.honest).toBe(false);
   });
 });
+
+describe('quotes are paired at word boundaries', () => {
+  // A closing quote glued to a word ("SIM locked") followed later by an opening quote used to
+  // pair across the gap, so the text between two quotes was flagged as a quoted value.
+  it('does not read the text between two quotes as a value', () => {
+    const text = 'Check for a message (such as "SIM missing" or "SIM locked"), or if it simply shows "No Signal."';
+    const values = extractValues(text);
+    expect(values).toEqual(expect.arrayContaining(['SIM locked', 'No Signal'])); // "SIM missing" follows "such as": an example, dropped by design
+    expect(values.some((v) => v.includes('or if it simply shows'))).toBe(false);
+  });
+
+  it('still reads an ordinary quoted value', () => {
+    expect(extractValues('the status is "return requested."')).toContain('return requested');
+  });
+});
