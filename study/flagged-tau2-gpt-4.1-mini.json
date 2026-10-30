@@ -327,22 +327,6 @@
   },
   {
     "file": "gpt-4.1-mini-2025-04-14_retail_base_gpt-4.1-2025-04-14_4trials.json",
-    "task_id": "87",
-    "trial": 0,
-    "turn": 21,
-    "content": "I found one of your orders with the address in Washington DC:\n565 Maple Drive, Suite 501, Washington, DC, 20307, USA.\n\nYou have 4 pending orders with different addresses:\n- #W2166301 (Denver, CO)\n- #W2466703 (Dallas, TX)\n- #W6832752 (Indianapolis, IN)\n- #W1994898 is processed, so address cannot be changed.\n\nI can update the address for the 3 pending orders to the Washington DC address and also update your default address to this.\n\nPlease confirm if you want me to proceed with this update.",
-    "flags": [
-      {
-        "kind": "unsupported-value",
-        "message": "The answer states values that no tool returned and the user never gave.",
-        "values": [
-          "4"
-        ]
-      }
-    ]
-  },
-  {
-    "file": "gpt-4.1-mini-2025-04-14_retail_base_gpt-4.1-2025-04-14_4trials.json",
     "task_id": "62",
     "trial": 0,
     "turn": 3,
@@ -1046,8 +1030,7 @@
         "kind": "unsupported-value",
         "message": "The answer states values that no tool returned and the user never gave.",
         "values": [
-          " symbol at the beginning. Could you please confirm if the correct order ID is",
-          " or provide the exact order ID with the"
+          " symbol at the beginning. Could you please confirm if the correct order ID is"
         ]
       }
     ]
