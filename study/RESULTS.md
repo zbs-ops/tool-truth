@@ -294,3 +294,51 @@ every model tried, and the noise grows with how much the model quotes the screen
 turns flagged). The ID view stayed silent and correct on all three: 0 flags, and the oracle confirms
 no telecom ID was invented. Two concrete checker bugs came out of this (`15GB` as a token, quote
 pairing). Fixing them would mean tuning on these files, so a fix needs fresh data to be tested on.
+
+## 10. Two fixes, then one model nobody had looked at (round 7)
+
+**Dev set:** the round 5 and 6 telecom files, where section 9 found two checker bugs.
+
+- **A number glued to a unit was read as a code.** `15GB` matched the same pattern as `HAT266`,
+  so it never met the tool's `data_limit_gb: 15.0`; `8.7GB` yielded nothing at all. Numbers with
+  a multi-letter unit (GB, MB, ms, ml, ...) are now read as numbers. Single-letter suffixes are
+  left alone, so `5G` isn't the number 5.
+- **Quotes paired across a gap.** A closing quote glued to a word could pair with the next opening
+  quote, so the text *between* two quoted phrases (`), or if it simply shows`) became a "value".
+  Quotes now open only after a non-word character and close only before one.
+
+Both fixes have tests that fail without them (`test/units-and-quotes.test.ts`). Re-running every
+study with them:
+
+| File | Flags before | After |
+|---|---|---|
+| o4-mini, airline + retail | 126 | 80 |
+| GPT-4.1, telecom | 280 | 127 |
+| Claude 3.7, telecom | 1,084 | 912 |
+| Claude 3.5 (τ-bench) | 123 | 121 |
+| GPT-4.1-mini, airline + retail | 72 | 71 |
+| every other file | unchanged | |
+
+All five hand-confirmed real catches are still flagged, and the ID view is unchanged on every
+file (o4-mini still raises 10, of which 8 are real). The o4-mini drop is the "750 ml" vs `750ml`
+unit style from section 5, which this fix happens to cover; it's a side effect on a set that's no
+longer held out, not a test result. 14 flags are new: correct quote pairing now exposes the second
+item in "such as X or Y" example lists, and numbers in offered options ("0.5GB, 1GB") are now
+checked. All 14 are false alarms of kinds already listed.
+
+**Held-out, run once with the rules frozen: GPT-4.1-mini on telecom** (`--setting base`), a file
+no rule had ever been tuned on. 6,865 agent turns, **320 flagged (4.7%)**. The old rules would have
+flagged 339, so the fixes cut **6%** here against 55% on the dev file. A seeded random 30 from all
+320, read by hand: **0 real.** 29 are quoted phone menu labels ("Mobile Network", "Reset to default"),
+the class section 9 left alone on purpose. One is the model writing a raw tool call into its
+answer (`{"recipient_name":"functions.toggle_data",...}`), which the checker read as values: a
+third checker gap, noted here and not fixed. The one `wrong-entity` and two
+`fabrication-after-failure` flags were also read: all false alarms ("Active" listed as an example
+status, menu labels after an unrelated failed call, a line-number suffix). ID view: 0 flags, and the
+ID scan finds no invented telecom IDs.
+
+**What that means.** The two bugs were real, and on the files where they were common the fixes
+remove more than half the noise without losing a real catch. They don't generalize much, because a
+new model brings its own dominant noise: for GPT-4.1-mini that's quoted menu labels. Fixing those
+would mean deciding when a quoted phrase is a claim at all, which is a different and harder
+question. Until then, on tech support, the ID view is the part to trust.

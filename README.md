@@ -131,6 +131,11 @@ turn against only what came before it. Full write-up: [study/RESULTS.md](study/R
   0 real in a random 30 from each. Mostly a plan limit restated as `15GB`, "line ending in 2002", and
   (Claude) quoted phone menu labels. The ID view: 0 flags on both, and the independent scan finds no
   invented telecom IDs. On tech support, trust the ID view and treat the full checker as noise.
+- **Two fixes, tested on one more unseen model (round 7):** numbers glued to units (`15GB`) are
+  now read as numbers, and quotes no longer pair across a gap. That cut GPT-4.1's telecom flags
+  280 -> 127 with every real catch kept. On a model nobody had looked at (GPT-4.1-mini, telecom,
+  rules frozen) it cut only 339 -> 320, with 0 real in a random 30: that model's noise is quoted
+  menu labels instead. Real bugs, real fixes, small effect on new data, and that's the result.
 
 For multi-turn logs, use `checkTurns(transcript)` to get a verdict for every agent turn. For the
 short list worth acting on first, pass a verdict to `idFlags`.
