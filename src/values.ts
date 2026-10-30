@@ -100,7 +100,10 @@ export function extractValues(text: string): string[] {
   }
   // Quoted strings, without the punctuation American style puts inside the quotes
   // ("return requested." vs a returned value of return requested).
-  for (const m of prose.matchAll(/"([^"\n]{2,80})"/g)) {
+  // Paired at word boundaries: an opening quote isn't glued to a word before it, a closing one
+  // isn't glued to a word after it. Otherwise '"SIM locked"), or if it shows "No Signal"' paired
+  // the middle as a quote. (Round 6 dev set.)
+  for (const m of prose.matchAll(/(?<![A-Za-z0-9])"([^"\n]{2,80})"(?![A-Za-z0-9])/g)) {
     const q = m[1]?.replace(/[\s.,;:!?]+$/, '');
     // Two-letter quotes ("no", "ok") are instructions to the user, not claims.
     if (q && q.length >= 3) found.add(q);
