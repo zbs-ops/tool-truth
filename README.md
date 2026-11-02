@@ -4,7 +4,7 @@
 >
 > **Approach:** check every concrete value in an agent's answer against what its tools, the user, and its instructions actually provided. Deterministic, no API keys.
 >
-> **Proof:** tested on three sets of real agent conversations (GPT-4o, Claude 3.5, and an untouched o4-mini set), with what worked and what didn't written up ([write-up](study/RESULTS.md)). It caught an agent inventing an order number the customer then relied on. Its invented-ID view was 8 for 10 on real problems where the full checker was 2 for 30, with no false alarms on two models it had never seen. 100 tests.
+> **Proof:** tested on three sets of real agent conversations (GPT-4o, Claude 3.5, and an untouched o4-mini set), with what worked and what didn't written up ([write-up](study/RESULTS.md)). It caught an agent inventing an order number the customer then relied on. Its invented-ID view was 8 for 10 on real problems where the full checker was 2 for 30, with no false alarms on two models it had never seen. 133 tests.
 
 
 **Did the agent tell the truth about what its tools returned?** This checks.
