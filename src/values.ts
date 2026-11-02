@@ -109,8 +109,9 @@ export function extractValues(text: string): string[] {
     if (q && q.length >= 3) found.add(q);
   }
 
-  // Standalone numbers only: never digits glued to letters, which belong to a code.
-  for (const m of prose.matchAll(/(?<![A-Za-z0-9_.-])[$€£]?\s?-?\d[\d,]*(?:\.\d+)?%?(?![A-Za-z0-9_])/g)) {
+  // Standalone numbers only: never digits glued to letters, which belong to a code. The
+  // lookahead also refuses a following ".digit", or "8.7GB" backtracks to a stray "8".
+  for (const m of prose.matchAll(/(?<![A-Za-z0-9_.-])[$€£]?\s?-?\d[\d,]*(?:\.\d+)?%?(?![A-Za-z0-9_]|\.\d)/g)) {
     const n = normalizeNumber(m[0]);
     if (n === null) continue;
     if (isTrivial(n)) continue;
