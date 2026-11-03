@@ -178,8 +178,16 @@ Map your framework's log onto that and call `checkTranscript({ steps })`.
 
 ## How I build
 
-I work with an AI coding assistant as a pair programmer. I decide what gets built, review
-every change, and own what ships.
+I pick the questions: does an agent's answer trace back to what its tools returned, and does a checker that says so hold up on real logs? The building is done by Friday, an AI agent I run. Friday writes the code and the tests on its own cloud machine, runs the studies on the public τ-bench and τ²-bench logs, hand-reads the flags, opens each change as a pull request, and merges it when CI passes. For each round I get a plain-language write-up of what was found, good and bad.
+
+**How claims are kept honest.** Rules get frozen before each new model's logs are opened, so a held-out result can't be tuned after the fact. Flags are read by hand, every flag or a random 30, and an independent scan for invented IDs checks what the checker missed.
+
+**Problems hit, and the fixes:**
+
+- **The first version was useless on real logs.** It flagged 776 turns and a random 30 had nothing real in them, because real agents rewrite values into prose ("May 19, 2024"). Each normalization fix is a general rule with a test, and the results section says which numbers are in-sample.
+- **Fixes that didn't carry over.** On Claude 3.5, with rules unchanged, a random 30 flags had no confirmed real problems. That result is kept in the write-up, and it led to the high-confidence invented-ID view.
+- **`15GB` read as text, and quotes paired across a gap.** Both were real bugs, found on telecom logs and fixed in round 7. They cut GPT-4.1's flags 280 to 127 but barely moved an unseen model's, and the write-up says exactly that.
+- **A number cut short.** `1.5GB` could be read as `1`, because the number pattern backed off to its whole part. Fixed in 0.5.6 with a test, and agentguard's port got the same fix.
 
 ## License
 
