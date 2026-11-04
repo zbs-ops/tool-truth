@@ -342,3 +342,28 @@ remove more than half the noise without losing a real catch. They don't generali
 new model brings its own dominant noise: for GPT-4.1-mini that's quoted menu labels. Fixing those
 would mean deciding when a quoted phrase is a claim at all, which is a different and harder
 question. Until then, on tech support, the ID view is the part to trust.
+
+## 11. A test that couldn't run: telecom with no customer (round 8, rules frozen)
+
+The telecom false alarms in sections 8 to 10 are mostly numbers in instructions aimed at a person
+("wait 10 seconds", "toggle airplane mode", quoted menu labels). τ²-bench also published the same
+456 telecom tasks in a `no-user` setting, for o4-mini and GPT-4.1. In it there is no customer: the
+agent calls the phone tools itself (`can_send_mms`, `reboot_device`, `toggle_airplane_mode`), so
+there is no one to instruct. Same tasks, same models, only the person removed. That looked like a
+clean way to test whether the noise comes from talking to someone.
+
+The checker found **0 flags on both models**, which would have read as "the noise disappears
+without a customer." It doesn't show that. In `no-user`, the agent's only text in every one of the
+456 conversations, on both models, is the end-of-run marker `###STOP###`. Every other agent message
+is a tool call with no text. So there were **0 turns stating a checkable value** and nothing for a
+provenance checker to test. The 0 is empty, not a result.
+
+What was done about it, so this can't recur silently: the study runner now prints how many judged
+turns state at least one checkable value next to every flag count. On the default telecom file
+that's 753 of 4,474 turns, which puts its 80 flags at about 1 in 9 checkable turns (sections 8 to
+10 give flags against all turns). Both `no-user` files are pinned in `study/run-all.sh` and CI
+re-checks that they still have nothing to check.
+
+**What would test it.** A setting where the agent writes prose to an audience that can't act, such
+as a final summary for a human with no follow-up instructions. τ²-bench doesn't publish one, so the
+question stays open.
