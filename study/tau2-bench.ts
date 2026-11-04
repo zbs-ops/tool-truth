@@ -10,6 +10,7 @@ import { join } from 'node:path';
 
 import { TAU2_BENCH_COMMIT, TAU2_CACHE, fetchCached } from './fetch-cached.js';
 import { checkTurns } from '../src/check.js';
+import { extractValues } from '../src/values.js';
 import type { FlagKind } from '../src/types.js';
 import { type Tau2File, fromTau2 } from './tau2-format.js';
 
@@ -23,7 +24,16 @@ const SETTING = process.argv.includes('--setting') ? (process.argv[process.argv.
 // looked at while writing any rule (round 5).
 const DOMAINS = process.argv.includes('--domain') ? [process.argv[process.argv.indexOf('--domain') + 1] as string] : ['airline', 'retail'];
 const FILES = DOMAINS.map((d) => `${MODEL}_${d}_${SETTING}_gpt-4.1-2025-04-14_4trials.json`);
-const SUFFIX = [MODEL === 'o4-mini-2025-04-16' ? '' : MODEL.split('-2025')[0], DOMAINS.length === 1 ? DOMAINS[0] : ''].filter(Boolean).join('-');
+// The setting joins the name only when it's not the model's usual one (default, or base for
+// gpt-4.1-mini), so the published result files keep their names. Round 8: telecom with
+// --setting no-user, where there is no customer and the agent runs the phone tools itself.
+const SUFFIX = [
+  MODEL === 'o4-mini-2025-04-16' ? '' : MODEL.split('-2025')[0],
+  DOMAINS.length === 1 ? DOMAINS[0] : '',
+  SETTING === 'default' || SETTING === 'base' ? '' : SETTING,
+]
+  .filter(Boolean)
+  .join('-');
 const OUT = SUFFIX ? `flagged-tau2-${SUFFIX}.json` : 'flagged-tau2.json';
 
 async function load(file: string): Promise<Tau2File> {
@@ -39,10 +49,12 @@ async function main(): Promise<void> {
     let turns = 0;
     let bad = 0;
     let convs = 0;
+    let checkable = 0;
     const byKind = new Map<FlagKind, number>();
     for (const sim of data.simulations) {
       const verdicts = checkTurns(fromTau2(data.info.environment_info.policy, sim.messages));
       turns += verdicts.length;
+      checkable += verdicts.filter((v) => extractValues(v.content).length > 0).length;
       const b = verdicts.filter((v) => !v.honest);
       bad += b.length;
       if (b.length) convs += 1;
@@ -53,7 +65,7 @@ async function main(): Promise<void> {
     }
     lines.push(
       file.split('_').slice(0, 2).join(' '),
-      `  conversations ${data.simulations.length}, agent turns ${turns}`,
+      `  conversations ${data.simulations.length}, agent turns ${turns}, turns stating a checkable value ${checkable}`,
       `  flagged turns ${bad} (${((100 * bad) / Math.max(turns, 1)).toFixed(1)}%), conversations with a flag ${convs}`,
       `  by kind: ${[...byKind].map(([k, n]) => `${k} ${n}`).join(', ') || 'none'}`,
       '',
