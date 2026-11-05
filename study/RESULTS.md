@@ -367,3 +367,45 @@ re-checks that they still have nothing to check.
 **What would test it.** A setting where the agent writes prose to an audience that can't act, such
 as a final summary for a human with no follow-up instructions. τ²-bench doesn't publish one, so the
 question stays open.
+
+## 12. Same tasks, different policy: telecom-workflow (round 9, rules frozen)
+
+τ²-bench also publishes the telecom domain with the agent's policy rewritten as a step-by-step
+workflow (`telecom-workflow`). The two settings use the same 114 tasks × 4 trials (checked: all 114
+task ids are shared) for o4-mini and GPT-4.1, so the only difference is how the agent's instructions
+are written. Rules frozen; the checker was not changed for this.
+
+| Model | Policy | Agent turns | Turns stating a checkable value | Flags | Flags per checkable turn |
+|---|---|---|---|---|---|
+| o4-mini | default | 4,474 | 753 | 80 | 10.6% |
+| o4-mini | workflow | 4,527 | 432 | **15** | **3.5%** |
+| GPT-4.1 | default | 5,440 | 807 | 127 | 15.7% |
+| GPT-4.1 | workflow | 5,381 | 704 | **33** | **4.7%** |
+
+**All 48 workflow flags were read by hand: 0 real.**
+
+- o4-mini (15): 12 network-mode wording ("2G-only", "3G-or-better"), 2 "line ending in 2002" (the
+  customer's own number), and 1 example: `8080`, given as "often a proxy host and port like
+  proxy.example.com and 8080". That's a hedged example, not a config the customer is told to save,
+  unlike round 5's one real catch.
+- GPT-4.1 (33): 27 "line ending in 2002", 4 quoted status or menu labels, 2 network-mode wording.
+- ID view: 0 flags on both. The independent ID scan finds 0 invented telecom IDs on both, so there
+  were no ID fabrications to miss.
+
+**What changed is the agents' writing, not the checker.** The first guess, that the workflow policy
+spells out the values the agents use and so grounds them, is wrong: the workflow policy contains
+fewer checkable values than the default one (29 against 45), and none of the 87 values flagged on
+the default o4-mini file appear in it. Counting the phrases behind the earlier false alarms, in all
+agent text:
+
+| Pattern (turns containing it) | o4-mini default | o4-mini workflow | GPT-4.1 default | GPT-4.1 workflow |
+|---|---|---|---|---|
+| "N seconds / minutes" | 96 | 46 | 18 | 4 |
+| network-mode wording (2G/3G/4G/5G) | 788 | 560 | 1,220 | 805 |
+| dialer codes (`*#..#`) | 9 | 0 | 0 | 0 |
+| "line ending in NNNN" | 4 | 2 | 109 | 29 |
+
+Under the workflow policy both models write fewer of the phrases that trip the checker, which fits
+the lower flag rate. This is a correlation across two policy texts, not a controlled test of which
+part of the wording matters. And it doesn't make the checker better: on tech support it is still a
+triage filter, and the ID view is still the part to trust.

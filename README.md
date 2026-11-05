@@ -141,6 +141,11 @@ turn against only what came before it. Full write-up: [study/RESULTS.md](study/R
   checker found 0 flags on o4-mini and GPT-4.1, but the agent's only text in all 456 conversations
   is the `###STOP###` marker, so there was nothing to check. Reported as a non-result, and the study
   runner now prints how many turns state a checkable value so an empty run can't pass for a clean one.
+- **Same tasks, a workflow-style policy (round 9, rules frozen):** on τ²-bench's `telecom-workflow`
+  setting (the same 114 tasks, the agent's policy rewritten as steps), flags per checkable turn fell
+  from 10.6% to 3.5% on o4-mini and from 15.7% to 4.7% on GPT-4.1. All 48 remaining flags were read
+  by hand: 0 real, and the independent ID scan finds no invented IDs. The checker didn't change; the
+  agents wrote fewer of the phrases that trip it ("wait 10 seconds", "line ending in 2002").
 
 For multi-turn logs, use `checkTurns(transcript)` to get a verdict for every agent turn. For the
 short list worth acting on first, pass a verdict to `idFlags`.
