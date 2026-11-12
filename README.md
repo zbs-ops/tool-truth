@@ -4,7 +4,7 @@
 >
 > **Approach:** check every concrete value in an agent's answer against what its tools, the user, and its instructions actually provided. Deterministic, no API keys.
 >
-> **Proof:** tested on three sets of real agent conversations (GPT-4o, Claude 3.5, and an untouched o4-mini set), with what worked and what didn't written up ([write-up](study/RESULTS.md)). It caught an agent inventing an order number the customer then relied on. Its invented-ID view was 8 for 10 on real problems where the full checker was 2 for 30, with no false alarms on two models it had never seen. 133 tests.
+> **Proof:** tested on three sets of real agent conversations (GPT-4o, Claude 3.5, and an untouched o4-mini set), with what worked and what didn't written up ([write-up](study/RESULTS.md)). It caught an agent inventing an order number the customer then relied on. Its invented-ID view was 8 for 10 on real problems where the full checker was 2 for 30, with no false alarms on two models it had never seen. 136 tests.
 
 
 **Did the agent tell the truth about what its tools returned?** This checks.
@@ -146,6 +146,11 @@ turn against only what came before it. Full write-up: [study/RESULTS.md](study/R
   from 10.6% to 3.5% on o4-mini and from 15.7% to 4.7% on GPT-4.1. All 48 remaining flags were read
   by hand: 0 real, and the independent ID scan finds no invented IDs. The checker didn't change; the
   agents wrote fewer of the phrases that trip it ("wait 10 seconds", "line ending in 2002").
+- **Do flagged conversations fail more often? (round 10, rules frozen):** across 5,360 τ²-bench
+  conversations, pooled, yes: 50.6% of flagged ones failed their task vs 41.8% of the rest. Compared
+  within each run, no: odds ratio 1.03 (p = 0.75). The pooled gap is telecom being both the hardest
+  domain and the most flagged. A flag is a pointer for a person to read, not a failure predictor. The
+  invented-ID view: 7 of 10 flagged conversations failed, too few to tell from chance.
 
 For multi-turn logs, use `checkTurns(transcript)` to get a verdict for every agent turn. For the
 short list worth acting on first, pass a verdict to `idFlags`.
