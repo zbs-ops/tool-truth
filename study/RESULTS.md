@@ -409,3 +409,31 @@ Under the workflow policy both models write fewer of the phrases that trip the c
 the lower flag rate. This is a correlation across two policy texts, not a controlled test of which
 part of the wording matters. And it doesn't make the checker better: on tech support it is still a
 triage filter, and the ID view is still the part to trust.
+
+## 13. Do flagged conversations fail more often? (round 10, rules frozen)
+
+Every τ²-bench conversation records whether the agent completed the task (reward 1 or 0). If a
+flag marks a real problem, flagged conversations should fail more often. `study/flags-vs-outcome.ts`
+joins the two across the 14 published runs the earlier rounds used (5,360 conversations; telecom
+with no customer is left out, because there is nothing to check). Output: `study/flags-vs-outcome.txt`.
+
+**Pooled, it looks like they do:** 50.6% of flagged conversations failed (482/953) vs 41.8% of the
+rest (1,843/4,407), Fisher p < 0.001. The gap survives splitting each run into its shorter and
+longer half, so it isn't only that longer conversations have more turns to be flagged in.
+
+**Compared within each run, it disappears.** Mantel-Haenszel across the 14 runs gives a common odds
+ratio of 1.03 (p = 0.745); within each run and length half, 0.99 (p = 0.959). Run by run the
+direction flips: flagged conversations failed more often in 9 runs and less often in 5, two of them
+significantly less (GPT-4.1 telecom 45.2% vs 73.5%, GPT-4.1-mini airline 16.7% vs 52.7%). The pooled
+gap comes from mixing runs: telecom is both the hardest domain and the one with the most flags (see
+§8 and §9), so pooling makes flags look predictive. A test pins that the Mantel-Haenszel step
+separates exactly this kind of mixing from a real effect.
+
+The invented-ID view: 7 of the 10 conversations it flags failed (70%), against 43.3% of the rest.
+That's the direction you'd expect from the hand-checked results in §7, but with 10 conversations
+it isn't distinguishable from chance (Fisher p = 0.113).
+
+**What it means:** a flag from the full checker says nothing, on its own, about whether the
+conversation succeeded. That fits §2–§12, where most full-checker flags on these logs were read by
+hand and found to be false alarms. A flag isn't a failure predictor; it's a pointer for a person to
+read. Whether invented IDs predict failure needs more of them than these logs contain.
