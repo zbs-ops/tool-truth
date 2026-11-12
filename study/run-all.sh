@@ -17,4 +17,5 @@ npx tsx study/tau2-bench.ts --domain telecom --setting no-user --dump
 npx tsx study/tau2-bench.ts --model gpt-4.1-2025-04-14 --domain telecom --setting no-user --dump
 npx tsx study/tau2-bench.ts --domain telecom-workflow --dump
 npx tsx study/tau2-bench.ts --model gpt-4.1-2025-04-14 --domain telecom-workflow --dump
+npx tsx study/flags-vs-outcome.ts --write
 npx tsx study/real-catches.ts
