@@ -34,4 +34,27 @@ describe("the outcome study's statistics", () => {
     const failRate = (pick: (c: Conv) => boolean) => pooled.filter((c) => pick(c) && c.failed).length / pooled.filter(pick).length;
     expect(failRate((c) => c.flagged)).toBeGreaterThan(failRate((c) => !c.flagged) + 0.5);
   });
+
+  it('compares one kind of flag with unflagged conversations only', () => {
+    // 20 conversations flagged for kind A (15 failed), 20 flagged only for kind B (all failed),
+    // 40 unflagged (10 failed). Kind A against the unflagged: odds ratio (15*30)/(5*10) = 9.
+    // Leaving the kind-B conversations in the comparison group would change it.
+    const withKind = (n: number, failed: boolean, kinds: string[]): Conv[] =>
+      Array.from({ length: n }, () => ({ flagged: kinds.length > 0, failed, idFlagged: false, turns: 1, kinds }));
+    const s = [
+      ...withKind(15, true, ['a']),
+      ...withKind(5, false, ['a']),
+      ...withKind(20, true, ['b']),
+      ...withKind(10, true, []),
+      ...withKind(30, false, []),
+    ];
+    const hasA = (c: Conv) => (c.kinds ?? []).includes('a');
+    expect(mantelHaenszel([s], hasA, (c) => hasA(c) || !c.flagged).or).toBeCloseTo(9, 9);
+    expect(mantelHaenszel([s], hasA).or).not.toBeCloseTo(9, 1);
+  });
+
+  it('keeps the default comparison unchanged: any flag vs none', () => {
+    const s = stratum(20, 10, 10, 20);
+    expect(mantelHaenszel([s], (c) => c.flagged, () => true)).toEqual(mantelHaenszel([s]));
+  });
 });
