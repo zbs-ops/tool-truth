@@ -45,6 +45,8 @@ export interface Conv {
   flagged: boolean;
   idFlagged: boolean;
   turns: number;
+  /** The kinds of flag raised anywhere in the conversation. */
+  kinds?: string[];
 }
 
 /** [failed, total] for the conversations matching `pick`. */
@@ -87,17 +89,22 @@ function erfc(x: number): number {
  * Cochran-Mantel-Haenszel test (continuity-corrected, 1 df). Each stratum is compared only with
  * itself, so a run that is both flag-heavy and hard can't make flags look predictive on its own.
  */
-export function mantelHaenszel(strata: Conv[][]): { or: number; p: number } {
+export function mantelHaenszel(
+  strata: Conv[][],
+  exposed: (c: Conv) => boolean = (c) => c.flagged,
+  include: (c: Conv) => boolean = () => true,
+): { or: number; p: number } {
   let num = 0;
   let den = 0;
   let sumA = 0;
   let sumE = 0;
   let sumV = 0;
-  for (const s of strata) {
-    const a = s.filter((c) => c.flagged && c.failed).length;
-    const b = s.filter((c) => c.flagged && !c.failed).length;
-    const c = s.filter((x) => !x.flagged && x.failed).length;
-    const d = s.filter((x) => !x.flagged && !x.failed).length;
+  for (const all of strata) {
+    const s = all.filter(include);
+    const a = s.filter((c) => exposed(c) && c.failed).length;
+    const b = s.filter((c) => exposed(c) && !c.failed).length;
+    const c = s.filter((x) => !exposed(x) && x.failed).length;
+    const d = s.filter((x) => !exposed(x) && !x.failed).length;
     const n = a + b + c + d;
     if (n < 2) continue;
     num += (a * d) / n;
@@ -109,6 +116,9 @@ export function mantelHaenszel(strata: Conv[][]): { or: number; p: number } {
   const chi = sumV === 0 ? 0 : (Math.abs(sumA - sumE) - 0.5) ** 2 / sumV;
   return { or: num / den, p: erfc(Math.sqrt(Math.max(chi, 0) / 2)) };
 }
+
+// Every kind check.ts can raise, in a fixed order so the output is stable.
+const KINDS = ['unsupported-value', 'fabrication-after-failure', 'wrong-entity', 'fabricated-refusal'];
 
 const pct = ([f, n]: [number, number]) => (n === 0 ? '   -  ' : `${((100 * f) / n).toFixed(1).padStart(5)}%`);
 const frac = ([f, n]: [number, number]) => `${f}/${n}`.padStart(9);
@@ -160,6 +170,7 @@ async function main(): Promise<void> {
         flagged: verdicts.some((v) => !v.honest),
         idFlagged: verdicts.some((v) => idFlags(v).length > 0),
         turns: verdicts.length,
+        kinds: [...new Set(verdicts.flatMap((v) => v.flags.map((f) => f.kind)))],
       };
     });
     lines.push(row(`${model.split('-2025')[0]} ${domain}`, convs));
@@ -192,6 +203,19 @@ async function main(): Promise<void> {
     `Compared within each run (Mantel-Haenszel): odds ratio ${mhRun.or.toFixed(2)}, p ${pval(mhRun.p)}.`,
     `Within each run and length half: odds ratio ${mhBoth.or.toFixed(2)}, p ${pval(mhBoth.p)}.`,
     `Invented-ID flags: ${idAll[0]}/${idAll[1]} of those conversations failed, vs ${notId[0]}/${notId[1]} of the rest (Fisher p ${pval(idP)}).`,
+    '',
+    'By kind of flag: conversations with at least one flag of that kind vs conversations with no flag',
+    'at all (conversations flagged only for other kinds are left out), compared within each run.',
+    '',
+    ['kind'.padEnd(26), 'failed | this kind'.padEnd(18), 'failed | no flag'.padEnd(16), 'MH odds ratio', 'MH p'].join('  '),
+    ...KINDS.map((kind) => {
+      const has = (c: Conv) => (c.kinds ?? []).includes(kind);
+      const mine = tally(all, has);
+      const none = tally(all, (c) => !c.flagged);
+      const mh = mantelHaenszel(byRun, has, (c) => has(c) || !c.flagged);
+      const or = Number.isFinite(mh.or) ? mh.or.toFixed(2) : '-';
+      return [kind.padEnd(26), `${pct(mine)} ${frac(mine)}`.padEnd(18), `${pct(none)} ${frac(none)}`, or.padStart(13), pval(mh.p).padStart(6)].join('  ');
+    }),
   );
   const out = lines.join('\n') + '\n';
   process.stdout.write(out);
