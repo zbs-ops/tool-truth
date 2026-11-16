@@ -26,3 +26,12 @@ Runs where flagged conversations failed more often: 9; less often: 5.
 Compared within each run (Mantel-Haenszel): odds ratio 1.03, p 0.745.
 Within each run and length half: odds ratio 0.99, p 0.959.
 Invented-ID flags: 7/10 of those conversations failed, vs 2318/5350 of the rest (Fisher p 0.113).
+
+By kind of flag: conversations with at least one flag of that kind vs conversations with no flag
+at all (conversations flagged only for other kinds are left out), compared within each run.
+
+kind                        failed | this kind  failed | no flag  MH odds ratio  MH p
+unsupported-value            50.9%   479/941     41.8% 1843/4407           1.04   0.626
+fabrication-after-failure    35.0%      7/20     41.8% 1843/4407           0.55   0.300
+wrong-entity                100.0%       1/1     41.8% 1843/4407              -   0.997
+fabricated-refusal             -         0/0     41.8% 1843/4407              -   1.000
