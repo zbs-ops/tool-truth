@@ -437,3 +437,21 @@ it isn't distinguishable from chance (Fisher p = 0.113).
 conversation succeeded. That fits §2–§12, where most full-checker flags on these logs were read by
 hand and found to be false alarms. A flag isn't a failure predictor; it's a pointer for a person to
 read. Whether invented IDs predict failure needs more of them than these logs contain.
+
+**By kind of flag** (round 10, continued). The checker raises four kinds of flag. For each, the
+conversations with at least one flag of that kind are compared, within each run, with the
+conversations that have no flag at all (those flagged only for other kinds are left out):
+
+| kind | failed, this kind | failed, no flag | within-run odds ratio | p |
+|---|---|---|---|---|
+| unsupported-value | 50.9% (479/941) | 41.8% (1,843/4,407) | 1.04 | 0.626 |
+| fabrication-after-failure | 35.0% (7/20) | 41.8% | 0.55 | 0.300 |
+| wrong-entity | 1/1 | 41.8% | - | - |
+| fabricated-refusal | none raised | 41.8% | - | - |
+
+Nearly every flagged conversation (941 of 953) has an unsupported-value flag, so that kind carries
+the overall result, and like it, it doesn't predict failure once runs are compared fairly. The
+other kinds are too rare on these logs to say anything: 20 conversations with a value stated after
+a failed tool call (if anything they failed less, not significantly), one wrong-entity, and no
+invented refusals in τ²-bench at all. The counts add up to more than 953 because a conversation can
+carry more than one kind. A test pins that a kind is compared only with unflagged conversations.
